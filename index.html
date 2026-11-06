@@ -201,6 +201,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
 
     <div class="stage" id="demo">
       <div class="demo-tabs" role="tablist" aria-label="選擇要試的功能">
+        <button role="tab" data-demo="cal" aria-selected="false">行事曆</button>
         <button role="tab" data-demo="todo" aria-selected="true">待辦四象限</button>
         <button role="tab" data-demo="voice" aria-selected="false">語音鬧鐘</button>
       </div>
@@ -220,7 +221,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
       <div class="sec-head">
         <span class="eyebrow">主打功能</span>
         <h2>下載前，先在上面那支手機點點看</h2>
-        <p>手機裡是 App 的實際畫面，用的是示範資料。共用行事曆要兩個人都登入才看得到，這裡用文字說明。</p>
+        <p>手機裡是 App 的實際畫面，用的是示範資料。共用的部分要兩個人都登入才看得到，這裡用文字說明。</p>
       </div>
       <div class="trio">
         <article class="feat">
@@ -232,7 +233,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
             <li>經期、待辦和紀念日不會被分享出去</li>
             <li>跨日的旅行用一條色帶連起來</li>
           </ul>
-          <a class="btn btn-ghost btn-sm" href="#faq">怎麼開始共用</a>
+          <button class="btn btn-ghost btn-sm" data-try="cal">看行事曆畫面</button>
         </article>
         <article class="feat">
           <span class="k">PRIORITY MATRIX</span>
@@ -361,14 +362,23 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
 (() => {
   // 每一步是一張 App 真實截圖;hot 是可點區域(以截圖寬高的百分比),點了跳到 next
   const FLOWS = {
+    cal: [
+      { img: 'c1', cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '把下方的清單往上拉，看 11 月 6 日的行程', hots: [{ x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', next: 1 }] },
+      { img: 'c2', cap: '當天的行程一張一張列出來', sub: '把清單往下收，回到月曆', hots: [{ x: 33, y: 21.8, w: 34, h: 4.4, label: '把清單往下收', next: 0 }] },
+    ],
     todo: [
-      { img: 't1', cap: '矩陣：依重要和緊急分成四格', sub: '點「清單」換一種看法', hot: { x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', next: 1 } },
-      { img: 't2', cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「回覆客戶提案」打勾', hot: { x: 13, y: 29.6, w: 6.5, h: 4, label: '把回覆客戶提案打勾', next: 2 } },
+      { img: 't1', cap: '矩陣：依重要和緊急分成四格', sub: '點「清單」換一種看法', hots: [{ x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', next: 1 }] },
+      { img: 't2', cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「規劃下季目標」打勾', hots: [{ x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', next: 2 }] },
       { img: 't3', cap: '打勾之後，下面會出現「復原」', sub: '按錯了也救得回來', auto: 2600, next: 3 },
-      { img: 't4', cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', hot: { x: 5, y: 14, w: 17, h: 4.4, label: '切換回矩陣', next: 0 } },
+      { img: 't4', cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', hots: [{ x: 5, y: 14, w: 17, h: 4.4, label: '切換回矩陣', next: 0 }] },
     ],
     voice: [
-      { img: 'v1', cap: '鬧鐘頁右下角的麥克風，說一句話就建好', sub: '點麥克風看實際操作影片', hot: { x: 57.5, y: 81.2, w: 14, h: 6.4, label: '看語音建立的影片', film: true } },
+      { img: 'v1', cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風看操作影片，或點 09:00 看響起來的樣子', hots: [
+        { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '看語音建立的影片', film: true },
+        { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', next: 1 }] },
+      { img: 'v5', cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」或「延後」', hots: [
+        { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', next: 0 },
+        { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', next: 0 }] },
     ],
   };
   const $ = (q) => document.querySelector(q);
@@ -382,8 +392,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     cap.innerHTML = `${st.cap}<small>${st.sub}</small>`;
     dots.innerHTML = FLOWS[flow].length > 1 ? FLOWS[flow].map((_, i) => `<i class="${i === step ? 'on' : ''}"></i>`).join('') : '';
     screen.querySelectorAll('.hot').forEach((n) => n.remove());
-    if (st.hot) {
-      const h = st.hot, b = document.createElement('button');
+    (st.hots || []).forEach((h) => {
+      const b = document.createElement('button');
       b.className = 'hot'; b.setAttribute('aria-label', h.label);
       Object.assign(b.style, { left: h.x + '%', top: h.y + '%', width: h.w + '%', height: h.h + '%' });
       b.addEventListener('click', () => {
@@ -392,7 +402,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
         step = h.next; render();
       });
       screen.appendChild(b);
-    }
+    });
     if (st.auto) timer = setTimeout(() => { step = st.next; render(); }, st.auto);
   }
   // 先載入所有截圖,切換時不閃
