@@ -13,6 +13,7 @@
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://richchard890707.github.io/ownitime/">
 <link rel="icon" href="assets/icon.png">
+<script src="assets/voice-parser.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=DM+Mono:wght@400;500&display=swap">
@@ -111,6 +112,17 @@ nav a:hover { color: var(--ink); }
 @keyframes tap { 0% { box-shadow: 0 0 0 0 rgba(76, 215, 201, .55); } 100% { box-shadow: 0 0 0 14px rgba(76, 215, 201, 0); } }
 .cap { min-height: 3.2em; max-width: 22em; text-align: center; font-size: .95rem; color: var(--ink); }
 .cap small { display: block; color: var(--ink-dim); font-size: .82rem; margin-top: 2px; }
+.talk { width: min(340px, 100%); display: grid; gap: 8px; padding: 14px 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.talk[hidden] { display: none; }
+.talk .said { font-family: var(--display); font-size: 1.05rem; min-height: 1.6em; }
+.talk .status { font-size: .82rem; color: var(--ink-dim); }
+.talk dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: .92rem; }
+.talk dt { color: var(--ink-dim); }
+.talk dd { margin: 0; }
+.talk form { display: flex; gap: 6px; }
+.talk input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 8px 10px; font: 400 .92rem/1.2 var(--body); }
+.talk button { border: 0; border-radius: 10px; padding: 0 14px; background: var(--accent); color: var(--accent-ink); font: 700 .9rem/1 var(--body); cursor: pointer; }
+.talk .fine { font-size: .75rem; }
 .after-try { font-size: .9rem; }
 .after-try a { color: var(--accent); font-weight: 700; }
 @media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
@@ -203,6 +215,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
         </div>
       </div>
       <p class="cap" id="cap" aria-live="polite"></p>
+      <div class="talk" id="talk" hidden aria-live="polite">
+        <p class="status" id="talk-status"></p>
+        <p class="said" id="talk-said"></p>
+        <dl id="talk-result"></dl>
+        <form id="talk-form"><input id="talk-input" aria-label="打一句話試試" placeholder="也可以打字：明天早上七點半提醒我拿包裹" autocomplete="off"><button type="submit">解析</button></form>
+        <p class="fine">用的是 App 裡同一套解析規則。語音由你的瀏覽器辨識（Chrome 會交給 Google、Safari 交給 Apple），這個網站不會保存。</p>
+      </div>
       <p class="after-try" id="after-try" hidden>喜歡的話，<a href="https://play.google.com/store/apps/details?id=com.ownitime.app" target="_blank" rel="noopener">到 Google Play 下載 OwnITime</a></p>
     </div>
   </div>
@@ -358,16 +377,16 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     { x: 70, y: 90, w: 23, h: 6.8, label: '待辦', go: 't1' },
   ];
   const S = {
-    c1: { cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '把下方清單往上拉，看當天的行程', nav: true, hots: [{ x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', go: 'c2' }, { x: 85.5, y: 74.5, w: 10, h: 6, label: '看語音建立的影片', film: true }] },
+    c1: { cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '把下方清單往上拉，或點麥克風用說的排行程', nav: true, hots: [{ x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', go: 'c2' }, { x: 85.5, y: 74.5, w: 10, h: 6, label: '用說的建立行程', talk: '行程' }] },
     c2: { cap: '當天的行程一張一張列出來', sub: '把清單往下收，回到月曆', nav: true, hots: [{ x: 33, y: 21.8, w: 34, h: 4.4, label: '把清單往下收', go: 'c1' }] },
-    t1: { cap: '待辦依重要和緊急分成四格', sub: '點「清單」換一種看法', nav: true, hots: [{ x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', go: 't2' }] },
+    t1: { cap: '待辦依重要和緊急分成四格', sub: '點「清單」換一種看法', nav: true, hots: [{ x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', go: 't2' }, { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' }] },
     t2: { cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「規劃下季目標」打勾', nav: true, hots: [
       { x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', go: 't3' },
-      { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }] },
+      { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }, { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' }] },
     t3: { cap: '打勾之後，下面會出現「復原」', sub: '按錯了也救得回來', nav: true, auto: ['t4', 2800], hots: [{ x: 80, y: 85, w: 15, h: 4, label: '復原', go: 't2' }] },
-    t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [{ x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }] },
-    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風看操作影片，或點 09:00 看響起來的樣子', nav: true, hots: [
-      { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '看語音建立的影片', film: true },
+    t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [{ x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }, { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' }] },
+    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風直接用說的，或點 09:00 看響起來的樣子', nav: true, hots: [
+      { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '用說的建立鬧鐘', talk: '鬧鐘' },
       { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5' }] },
     v5: { cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」或「延後」', hots: [
       { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', go: 'v1' },
@@ -390,7 +409,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
       b.addEventListener('click', () => {
         screen.classList.remove('fresh');
         $('#after-try').hidden = false;
-        if (h.film) { $('#film').scrollIntoView({ behavior: 'smooth' }); $('#film video').play().catch(() => {}); return; }
+        if (h.talk) return listen(h.talk);
         go(h.go);
       });
       screen.appendChild(b);
@@ -398,6 +417,46 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     if (st.auto) timer = setTimeout(() => go(st.auto[0]), st.auto[1]);
   }
   Object.keys(S).forEach((id) => { new Image().src = `assets/shots/${id}.webp`; }); // 先載入,切換時不閃
+  // ---------- 直接用說的:瀏覽器辨識 + App 同一套解析(assets/voice-parser.js 由 App 的 Dart 解析器編譯) ----------
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const talk = $('#talk'), tStatus = $('#talk-status'), tSaid = $('#talk-said'), tResult = $('#talk-result');
+  const WD = { MO: '一', TU: '二', WE: '三', TH: '四', FR: '五', SA: '六', SU: '日' };
+  const Q = { 1: '立刻做(重要・緊急)', 2: '排時間做(重要・不緊急)', 3: '快速解決(不重要・緊急)', 4: '有空再說(不重要・不緊急)' };
+  const p2 = (n) => String(n).padStart(2, '0');
+  const day = (d) => `${d.getMonth() + 1} 月 ${d.getDate()} 日 週${'日一二三四五六'[d.getDay()]}`;
+  let kind = '鬧鐘', rec = null;
+  function show(text) {
+    tSaid.textContent = text ? `「${text}」` : '';
+    tResult.innerHTML = '';
+    if (!text || !window.ownitimeParseVoice) return;
+    const c = JSON.parse(window.ownitimeParseVoice(text));
+    const rows = [['建立', kind], ['事情', c.title || '(沒聽到事情)']];
+    if (c.when) {
+      const w = new Date(c.when), e = c.endAt && new Date(c.endAt);
+      if (c.allDay) { const last = e ? new Date(e - 864e5) : w; rows.push(['日期', e && last - w > 0 ? `${day(w)} 到 ${day(last)}(全天)` : `${day(w)}(全天)`]); }
+      else rows.push(['時間', `${day(w)} ${p2(w.getHours())}:${p2(w.getMinutes())}` + (e ? ` 到 ${p2(e.getHours())}:${p2(e.getMinutes())}` : '')]);
+    } else rows.push(['時間', '沒講時間']);
+    const rep = c.daily ? '每天' : c.byWeekday.length ? '每週' + c.byWeekday.map((x) => WD[x]).join('、') : c.monthly ? '每月' : c.yearly ? '每年' : '';
+    if (rep) rows.push(['重複', rep]);
+    if (c.quadrant) rows.push(['象限', Q[c.quadrant]]);
+    if (c.label) rows.push(['標籤', c.label]);
+    tResult.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd></dd>`).join('');
+    tResult.querySelectorAll('dd').forEach((dd, i) => { dd.textContent = rows[i][1]; });
+  }
+  function listen(k) {
+    kind = k; talk.hidden = false; show('');
+    talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (!Rec) { tStatus.textContent = '這個瀏覽器不支援語音輸入(建議用 Chrome 或 Safari)，可以在下面打字試試。'; return; }
+    try { rec && rec.abort(); } catch (_) {}
+    rec = new Rec(); rec.lang = 'zh-TW'; rec.interimResults = true; rec.maxAlternatives = 1;
+    tStatus.textContent = `正在聽…說一句要建立的${k}，例如「明天早上七點半提醒我拿包裹」`;
+    rec.onresult = (e) => { const t = [...e.results].map((r) => r[0].transcript).join(''); show(t); };
+    rec.onerror = (e) => { tStatus.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? '沒有拿到麥克風權限。請在瀏覽器網址列旁允許麥克風，或在下面打字試試。' : '沒聽清楚，再點一次麥克風，或在下面打字試試。'; };
+    rec.onend = () => { if (tStatus.textContent.startsWith('正在聽')) tStatus.textContent = tSaid.textContent ? '聽完了。App 裡會先讓你確認，再建立。' : '沒聽到聲音，再點一次麥克風試試。'; };
+    try { rec.start(); } catch (_) { tStatus.textContent = '麥克風沒辦法啟動，可以在下面打字試試。'; }
+  }
+  $('#talk-form').addEventListener('submit', (e) => { e.preventDefault(); tStatus.textContent = '用 App 的規則解析：'; show($('#talk-input').value.trim()); });
+
   const START = { cal: 'c1', todo: 't1', voice: 'v1' };
   document.querySelectorAll('[data-try]').forEach((b) => b.addEventListener('click', () => {
     go(START[b.dataset.try]); screen.classList.add('fresh');
