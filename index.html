@@ -609,15 +609,15 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
   let cur = 'cal';
   view.addEventListener('click', (e) => demos[cur][1](e));
   view.addEventListener('submit', onTodoSubmit);
-  function show(key) {
+  function show(key, first) {
     cur = key; clearInterval(typeTimer);
     document.querySelectorAll('.ringing').forEach(n => n.remove());
     document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.demo === key));
-    hintText.textContent = demos[key][2]; view.scrollTop = 0; demos[key][0]();
+    if (!first) hintText.textContent = demos[key][2]; view.scrollTop = 0; demos[key][0]();
   }
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => show(b.dataset.demo)));
   document.querySelectorAll('[data-try]').forEach(b => b.addEventListener('click', () => { show(b.dataset.try); $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' }); }));
-  show('cal');
+  show('cal', true);
 })();
 </script>
 </body>
