@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://richchard890707.github.io/ownitime/sitemap.xml
