@@ -101,20 +101,16 @@ nav a:hover { color: var(--ink); }
 
 /* 手機示範:放 App 真實截圖(星夜主題),上面疊可點的熱區,不自己畫介面 */
 .stage { display: grid; justify-items: center; gap: 14px; }
-.demo-tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
-.demo-tabs button { border: 0; background: none; color: var(--ink-dim); font: 500 .88rem/1 var(--body); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
-.demo-tabs button[aria-selected="true"] { background: #0f2b26; color: #4cd7c9; }
 .phone { width: min(320px, 100%); background: #050807; border-radius: 44px; padding: 10px; box-shadow: var(--shadow); }
 .screen { position: relative; aspect-ratio: 9 / 20; border-radius: 34px; overflow: hidden; background: #0b1614; }
 .screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .25s ease; }
 .hot { position: absolute; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 12px; }
-.hot::after { content: ""; position: absolute; inset: -4px; border-radius: inherit; border: 2px solid #4cd7c9; box-shadow: 0 0 0 0 rgba(76, 215, 201, .5); animation: tap 1.6s ease-out infinite; }
+.hot::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; border: 1.5px solid rgba(76, 215, 201, .45); }
+.hot:hover::after, .hot:focus-visible::after { border-color: #4cd7c9; background: rgba(76, 215, 201, .12); }
+.screen.fresh .hot::after { animation: tap 1.6s ease-out 3; }
 @keyframes tap { 0% { box-shadow: 0 0 0 0 rgba(76, 215, 201, .55); } 100% { box-shadow: 0 0 0 14px rgba(76, 215, 201, 0); } }
 .cap { min-height: 3.2em; max-width: 22em; text-align: center; font-size: .95rem; color: var(--ink); }
 .cap small { display: block; color: var(--ink-dim); font-size: .82rem; margin-top: 2px; }
-.dots { display: flex; gap: 6px; }
-.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
-.dots i.on { background: var(--accent); }
 .after-try { font-size: .9rem; }
 .after-try a { color: var(--accent); font-weight: 700; }
 @media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
@@ -200,18 +196,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     </div>
 
     <div class="stage" id="demo">
-      <div class="demo-tabs" role="tablist" aria-label="選擇要試的功能">
-        <button role="tab" data-demo="cal" aria-selected="false">行事曆</button>
-        <button role="tab" data-demo="todo" aria-selected="true">待辦四象限</button>
-        <button role="tab" data-demo="voice" aria-selected="false">語音鬧鐘</button>
-      </div>
+      <p class="cap" style="min-height:0"><small>手機裡的按鈕都能點，底部可以切換鬧鐘、行事曆、待辦</small></p>
       <div class="phone">
         <div class="screen" id="screen">
-          <img id="shot" src="assets/shots/t1.webp" alt="" width="720" height="1600">
+          <img id="shot" src="assets/shots/c1.webp" alt="" width="720" height="1600">
         </div>
       </div>
       <p class="cap" id="cap" aria-live="polite"></p>
-      <div class="dots" id="dots" aria-hidden="true"></div>
       <p class="after-try" id="after-try" hidden>喜歡的話，<a href="https://play.google.com/store/apps/details?id=com.ownitime.app" target="_blank" rel="noopener">到 Google Play 下載 OwnITime</a></p>
     </div>
   </div>
@@ -360,64 +351,60 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
 
 <script>
 (() => {
-  // 每一步是一張 App 真實截圖;hot 是可點區域(以截圖寬高的百分比),點了跳到 next
-  const FLOWS = {
-    cal: [
-      { img: 'c1', cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '把下方的清單往上拉，看 11 月 6 日的行程', hots: [{ x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', next: 1 }] },
-      { img: 'c2', cap: '當天的行程一張一張列出來', sub: '把清單往下收，回到月曆', hots: [{ x: 33, y: 21.8, w: 34, h: 4.4, label: '把清單往下收', next: 0 }] },
-    ],
-    todo: [
-      { img: 't1', cap: '矩陣：依重要和緊急分成四格', sub: '點「清單」換一種看法', hots: [{ x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', next: 1 }] },
-      { img: 't2', cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「規劃下季目標」打勾', hots: [{ x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', next: 2 }] },
-      { img: 't3', cap: '打勾之後，下面會出現「復原」', sub: '按錯了也救得回來', auto: 2600, next: 3 },
-      { img: 't4', cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', hots: [{ x: 5, y: 14, w: 17, h: 4.4, label: '切換回矩陣', next: 0 }] },
-    ],
-    voice: [
-      { img: 'v1', cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風看操作影片，或點 09:00 看響起來的樣子', hots: [
-        { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '看語音建立的影片', film: true },
-        { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', next: 1 }] },
-      { img: 'v5', cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」或「延後」', hots: [
-        { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', next: 0 },
-        { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', next: 0 }] },
-    ],
+  // 每個畫面是一張 App 真實截圖(星夜主題);hots 是畫面上真的按鈕的位置(以截圖寬高的百分比),點了就跳到那個畫面
+  const NAV = [ // 底部導覽:鬧鐘、行事曆、待辦
+    { x: 6, y: 88.6, w: 25, h: 6.4, label: '鬧鐘', go: 'v1' },
+    { x: 37.5, y: 88.6, w: 25, h: 6.4, label: '行事曆', go: 'c1' },
+    { x: 69, y: 88.6, w: 25, h: 6.4, label: '待辦', go: 't1' },
+  ];
+  const S = {
+    c1: { cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '把下方清單往上拉，看當天的行程', nav: true, hots: [{ x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', go: 'c2' }, { x: 85.5, y: 74.5, w: 10, h: 6, label: '看語音建立的影片', film: true }] },
+    c2: { cap: '當天的行程一張一張列出來', sub: '把清單往下收，回到月曆', nav: true, hots: [{ x: 33, y: 21.8, w: 34, h: 4.4, label: '把清單往下收', go: 'c1' }] },
+    t1: { cap: '待辦依重要和緊急分成四格', sub: '點「清單」換一種看法', nav: true, hots: [{ x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', go: 't2' }] },
+    t2: { cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「規劃下季目標」打勾', nav: true, hots: [
+      { x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', go: 't3' },
+      { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }] },
+    t3: { cap: '打勾之後，下面會出現「復原」', sub: '按錯了也救得回來', nav: true, auto: ['t4', 2800], hots: [{ x: 80, y: 85, w: 15, h: 4, label: '復原', go: 't2' }] },
+    t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [{ x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }] },
+    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風看操作影片，或點 09:00 看響起來的樣子', nav: true, hots: [
+      { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '看語音建立的影片', film: true },
+      { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5' }] },
+    v5: { cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」或「延後」', hots: [
+      { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', go: 'v1' },
+      { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', go: 'v1' }] },
   };
   const $ = (q) => document.querySelector(q);
-  const screen = $('#screen'), shot = $('#shot'), cap = $('#cap'), dots = $('#dots');
-  let flow = 'todo', step = 0, timer;
-  function render() {
+  const screen = $('#screen'), shot = $('#shot'), cap = $('#cap');
+  let timer;
+  function go(id) {
     clearTimeout(timer);
-    const st = FLOWS[flow][step];
-    shot.src = `assets/shots/${st.img}.webp`;
+    const st = S[id];
+    shot.src = `assets/shots/${id}.webp`;
     shot.alt = `OwnITime 實際畫面：${st.cap}`;
     cap.innerHTML = `${st.cap}<small>${st.sub}</small>`;
-    dots.innerHTML = FLOWS[flow].length > 1 ? FLOWS[flow].map((_, i) => `<i class="${i === step ? 'on' : ''}"></i>`).join('') : '';
     screen.querySelectorAll('.hot').forEach((n) => n.remove());
-    (st.hots || []).forEach((h) => {
+    [...(st.hots || []), ...(st.nav ? NAV : [])].forEach((h) => {
       const b = document.createElement('button');
       b.className = 'hot'; b.setAttribute('aria-label', h.label);
       Object.assign(b.style, { left: h.x + '%', top: h.y + '%', width: h.w + '%', height: h.h + '%' });
       b.addEventListener('click', () => {
+        screen.classList.remove('fresh');
         $('#after-try').hidden = false;
-        if (h.film) { const v = $('#film video'); $('#film').scrollIntoView({ behavior: 'smooth' }); v.play().catch(() => {}); return; }
-        step = h.next; render();
+        if (h.film) { $('#film').scrollIntoView({ behavior: 'smooth' }); $('#film video').play().catch(() => {}); return; }
+        go(h.go);
       });
       screen.appendChild(b);
     });
-    if (st.auto) timer = setTimeout(() => { step = st.next; render(); }, st.auto);
+    if (st.auto) timer = setTimeout(() => go(st.auto[0]), st.auto[1]);
   }
-  // 先載入所有截圖,切換時不閃
-  Object.values(FLOWS).flat().forEach((st) => { new Image().src = `assets/shots/${st.img}.webp`; });
-  function show(key) {
-    flow = key; step = 0;
-    document.querySelectorAll('.demo-tabs button').forEach((b) => b.setAttribute('aria-selected', b.dataset.demo === key));
-    render();
-  }
-  document.querySelectorAll('.demo-tabs button').forEach((b) => b.addEventListener('click', () => show(b.dataset.demo)));
+  Object.keys(S).forEach((id) => { new Image().src = `assets/shots/${id}.webp`; }); // 先載入,切換時不閃
+  const START = { cal: 'c1', todo: 't1', voice: 'v1' };
   document.querySelectorAll('[data-try]').forEach((b) => b.addEventListener('click', () => {
-    if (FLOWS[b.dataset.try]) show(b.dataset.try);
+    go(START[b.dataset.try]); screen.classList.add('fresh');
     $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }));
-  show('todo');
+  screen.classList.add('fresh');
+  go('c1');
 })();
 </script>
 </body>
