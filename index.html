@@ -109,6 +109,7 @@ nav a:hover { color: var(--ink); }
 .hot::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; border: 1.5px solid rgba(76, 215, 201, .28); }
 .hot:hover::after, .hot:focus-visible::after { border-color: #4cd7c9; background: rgba(76, 215, 201, .12); }
 .screen.fresh .hot::after { animation: tap 1.6s ease-out 3; }
+.hot.main::after { border-color: #4cd7c9; animation: tap 1.6s ease-out infinite; }
 @keyframes tap { 0% { box-shadow: 0 0 0 0 rgba(76, 215, 201, .55); } 100% { box-shadow: 0 0 0 14px rgba(76, 215, 201, 0); } }
 .cap { min-height: 3.2em; max-width: 22em; text-align: center; font-size: .95rem; color: var(--ink); }
 .cap small { display: block; color: var(--ink-dim); font-size: .82rem; margin-top: 2px; }
@@ -432,14 +433,14 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
       { x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', go: 't3' }, { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't0' }, MIC_T] },
     t3: { cap: '打勾之後，下面會出現「復原」', sub: '按錯了也救得回來', nav: true, auto: ['t4', 2800], hots: [{ x: 80, y: 85, w: 15, h: 4, label: '復原', go: 't2' }] },
     t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [...HDR(8.7), { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't0' }, MIC_T] },
-    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風、點「起床」看重複方式，或點 09:00 看響起來的樣子', nav: true, hots: [...HDR(8.7),
+    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點閃動的 09:00 看鬧鐘響起來、試試延後；也可以點麥克風或「起床」', nav: true, hots: [...HDR(8.7),
       { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '用說的建立鬧鐘', talk: '鬧鐘' },
       { x: 3, y: 39.4, w: 44, h: 9.6, label: '編輯「起床」', go: 'a2' },
-      { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5' }] },
+      { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5', main: true }] },
     a2: { cap: '重複方式：每日、週一至週五、指定星期、每週間隔都能選', sub: '點右上的 ✕ 回到鬧鐘', hots: [{ x: 82, y: 12.8, w: 11, h: 5.6, label: '關閉', go: 'v1' }, BACK(6.9, 8.6)] },
     v5: { cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」，或按「延後」選要延多久', hots: [
       { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', go: 'v1', note: '鬧鐘已停止' },
-      { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', go: 'v6' }] },
+      { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', go: 'v6', main: true }] },
     v6: { cap: '延後可以選 5 分、10 分、1 小時或明天', sub: '點一個選項試試', hots: [
       { x: 18.5, y: 90.8, w: 14.5, h: 5.6, label: '延後 5 分鐘', go: 'v1', note: '已延後 5 分鐘，19:44 再響' },
       { x: 34.5, y: 90.8, w: 14.5, h: 5.6, label: '延後 10 分鐘', go: 'v1', note: '已延後 10 分鐘，19:49 再響' },
@@ -472,7 +473,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     if (st.matrix) matrix();
     [...(st.hots || []), ...(st.nav ? NAV : [])].forEach((h) => {
       const b = document.createElement('button');
-      b.className = 'hot'; b.setAttribute('aria-label', h.label);
+      b.className = h.main ? 'hot main' : 'hot'; b.setAttribute('aria-label', h.label);
       Object.assign(b.style, { left: h.x + '%', top: h.y + '%', width: h.w + '%', height: h.h + '%' });
       b.addEventListener('click', () => {
         screen.classList.remove('fresh');
