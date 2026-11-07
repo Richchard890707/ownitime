@@ -141,6 +141,18 @@ nav a:hover { color: var(--ink); }
 .listening .acts button { border: 0; border-radius: 999px; padding: 13px 26px; font: 700 1rem/1 var(--body); cursor: pointer; }
 .listening .done { background: #3fd6ae; color: #062019; }
 .listening .cancel { background: rgba(255, 255, 255, .12); color: #eafff7; }
+.screen { container-type: inline-size; }
+.mx { position: absolute; }
+.mx-cover { background-image: url(assets/shots/t0c.webp); }
+.mx-count { font: 500 3.3cqw/1 var(--body); translate: -50% -50%; }
+.mx-row { height: 3.1%; display: flex; align-items: center; gap: 2.8cqw; padding-left: 3.3cqw; background: rgba(15, 26, 36, .78); border-radius: 1.2cqw; color: #e8f2f5; font: 400 3.3cqw/1 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: grab; z-index: 2; }
+.mx-row span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 2cqw; }
+.mx-ck { flex: none; width: 2.3cqw; height: 2.3cqw; padding: 0; border-radius: 50%; border: .33cqw solid #869197; background: none; cursor: pointer; position: relative; }
+.mx-ck::before { content: ""; position: absolute; inset: -2cqw; }
+.mx-row.done span { text-decoration: line-through; color: #869197; }
+.mx-row.done .mx-ck { background: #869197; }
+.mx-row.lift { z-index: 5; box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, .55); outline: .3cqw solid #4cd7c9; cursor: grabbing; }
+.mx-drop { border: .4cqw dashed; border-radius: 3cqw; pointer-events: none; }
 .after-try { font-size: .9rem; }
 .after-try a { color: var(--accent); font-weight: 700; }
 @media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
@@ -399,34 +411,65 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
   const NAV = [ // 底部導覽:鬧鐘、行事曆、待辦
     { x: 7, y: 90, w: 23, h: 6.8, label: '鬧鐘', go: 'v1' },
     { x: 38.5, y: 90, w: 23, h: 6.8, label: '行事曆', go: 'c1' },
-    { x: 70, y: 90, w: 23, h: 6.8, label: '待辦', go: 't1' },
+    { x: 70, y: 90, w: 23, h: 6.8, label: '待辦', go: 't0' },
   ];
+  // 標題列右上的 ⏱ 情境計時、⚙ 設定;y 是那一列的中線(各張截圖狀態列高度不同)
+  const HDR = (y) => [{ x: 77.5, y: y - 2.6, w: 10, h: 5.2, label: '情境計時', go: 'k0' }, { x: 89, y: y - 2.6, w: 10, h: 5.2, label: '設定', go: 's1' }];
+  const BACK = (x, y) => ({ x: x - 5, y: y - 2.8, w: 10, h: 5.6, label: '返回', back: true });
+  const MIC_T = { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' };
   const S = {
-    c1: { cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '把下方清單往上拉，或點麥克風用說的排行程', nav: true, hots: [{ x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', go: 'c2' }, { x: 85.5, y: 74.5, w: 10, h: 6, label: '用說的建立行程', talk: '行程' }] },
-    c2: { cap: '當天的行程一張一張列出來', sub: '把清單往下收，回到月曆', nav: true, hots: [{ x: 33, y: 21.8, w: 34, h: 4.4, label: '把清單往下收', go: 'c1' }] },
-    t1: { cap: '待辦依重要和緊急分成四格', sub: '點「清單」換一種看法', nav: true, hots: [{ x: 24, y: 14, w: 18, h: 4.4, label: '切換到清單', go: 't2' }, { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' }] },
-    t2: { cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「規劃下季目標」打勾', nav: true, hots: [
-      { x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', go: 't3' },
-      { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }, { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' }] },
+    c1: { cap: '跨日的「沖繩旅行」用一條色帶連起來', sub: '上拉清單、點麥克風，或點上方綠色的「選擇日曆」圖示', nav: true, hots: [...HDR(8.7),
+      { x: 33, y: 64.6, w: 34, h: 4.4, label: '把當天清單往上拉', go: 'c2' }, { x: 85.5, y: 74.5, w: 10, h: 6, label: '用說的建立行程', talk: '行程' },
+      { x: 67.5, y: 13.4, w: 10, h: 5.4, label: '選擇要顯示的日曆', go: 'c5' }, { x: 89, y: 65.6, w: 10, h: 5.4, label: '週檢視', go: 'c4' }] },
+    c2: { cap: '當天的行程一張一張列出來', sub: '把清單往下收，回到月曆', nav: true, hots: [...HDR(8.7), { x: 33, y: 21.8, w: 34, h: 4.4, label: '把清單往下收', go: 'c1' }] },
+    c3: { cap: '經期是月曆上的一層，粉紅圈就是生理期', sub: '點上方「選擇日曆」圖示，可以開關每一層', nav: true, hots: [...HDR(6.1),
+      { x: 67.5, y: 10.7, w: 10, h: 5.4, label: '選擇要顯示的日曆', go: 'c5' }, { x: 89, y: 65.6, w: 10, h: 5.4, label: '週檢視', go: 'c4' }] },
+    c4: { cap: '週檢視是訂閱功能', sub: '左上角返回', hots: [BACK(6.7, 6.1)] },
+    c5: { cap: '待辦、農曆、生理期都是一層，想看哪個就打開', sub: '點右上的 ✕ 回到月曆', hots: [{ x: 81.5, y: 49.7, w: 11, h: 5.6, label: '關閉', go: 'c3' }] },
+    t0: { cap: '待辦依重要和緊急分成四格', sub: '長按待辦拖到別的格子，點圓圈打勾', nav: true, matrix: true, hots: [...HDR(8.6),
+      { x: 25, y: 13.6, w: 16, h: 5, label: '切換到清單', go: 't2' }, { x: 62.5, y: 82.6, w: 10, h: 5.6, label: '用說的新增待辦', talk: '待辦' }] },
+    t2: { cap: '清單：同樣的待辦，一行一件', sub: '點圓圈，把「規劃下季目標」打勾', nav: true, hots: [...HDR(8.7),
+      { x: 13, y: 30.6, w: 6.5, h: 4, label: '把規劃下季目標打勾', go: 't3' }, { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't0' }, MIC_T] },
     t3: { cap: '打勾之後，下面會出現「復原」', sub: '按錯了也救得回來', nav: true, auto: ['t4', 2800], hots: [{ x: 80, y: 85, w: 15, h: 4, label: '復原', go: 't2' }] },
-    t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [{ x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't1' }, { x: 63, y: 82.6, w: 9, h: 5.4, label: '用說的新增待辦', talk: '待辦' }] },
-    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風直接用說的，或點 09:00 看響起來的樣子', nav: true, hots: [
+    t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [...HDR(8.7), { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't0' }, MIC_T] },
+    v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點麥克風、點「起床」看重複方式，或點 09:00 看響起來的樣子', nav: true, hots: [...HDR(8.7),
       { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '用說的建立鬧鐘', talk: '鬧鐘' },
+      { x: 3, y: 39.4, w: 44, h: 9.6, label: '編輯「起床」', go: 'a2' },
       { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5' }] },
-    v5: { cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」或「延後」', hots: [
-      { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', go: 'v1' },
-      { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', go: 'v1' }] },
+    a2: { cap: '重複方式：每日、週一至週五、指定星期、每週間隔都能選', sub: '點右上的 ✕ 回到鬧鐘', hots: [{ x: 82, y: 12.8, w: 11, h: 5.6, label: '關閉', go: 'v1' }, BACK(6.9, 8.6)] },
+    v5: { cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」，或按「延後」選要延多久', hots: [
+      { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', go: 'v1', note: '鬧鐘已停止' },
+      { x: 17.5, y: 90.6, w: 63, h: 6, label: '延後', go: 'v6' }] },
+    v6: { cap: '延後可以選 5 分、10 分、1 小時或明天', sub: '點一個選項試試', hots: [
+      { x: 18.5, y: 90.8, w: 14.5, h: 5.6, label: '延後 5 分鐘', go: 'v1', note: '已延後 5 分鐘，19:44 再響' },
+      { x: 34.5, y: 90.8, w: 14.5, h: 5.6, label: '延後 10 分鐘', go: 'v1', note: '已延後 10 分鐘，19:49 再響' },
+      { x: 50.6, y: 90.8, w: 14.5, h: 5.6, label: '延後 1 小時', go: 'v1', note: '已延後 1 小時，20:39 再響' },
+      { x: 66.6, y: 90.8, w: 14.5, h: 5.6, label: '延到明天', go: 'v1', note: '已延到明天' },
+      { x: 17.5, y: 81.5, w: 63, h: 6.6, label: '停止', go: 'v1', note: '鬧鐘已停止' }] },
+    k0: { cap: '情境計時：健身、煮飯、久坐都在這裡', sub: '點「今天想練哪裡?」、「煮飯」或「久坐提醒」', hots: [BACK(6.5, 6.1),
+      { x: 5, y: 10.5, w: 90, h: 12.5, label: '今天想練哪裡', go: 'f1' }, { x: 5, y: 25, w: 90, h: 12.3, label: '煮飯', go: 'k1' }, { x: 5, y: 39, w: 90, h: 10.5, label: '久坐提醒', go: 'k2' }] },
+    k1: { cap: '一起開飯：好幾道菜同時倒數，算好每道什麼時候下鍋', sub: '左上角返回', hots: [BACK(6.7, 6.1)] },
+    k2: { cap: '久坐提醒：坐多久提醒一次、起來動多久', sub: '左上角返回', hots: [BACK(6.7, 6.4)] },
+    f1: { cap: '3D 人體：點想練的部位', sub: '點胸部，或右上「紀錄」看恢復狀況', hots: [{ x: 86, y: 3.3, w: 10, h: 5.6, label: '關閉', go: 'k0' },
+      { x: 77, y: 9.8, w: 18, h: 5, label: '訓練紀錄', go: 'f5' }, { x: 38, y: 22, w: 24, h: 9, label: '胸', go: 'f2' }, { x: 5, y: 72.6, w: 12, h: 5.4, label: '胸', go: 'f2' }] },
+    f2: { cap: '選好部位，列出這裡能做的動作', sub: '點「Chest Press」開始', hots: [{ x: 86, y: 3.3, w: 10, h: 5.6, label: '關閉', go: 'f1' }, { x: 5, y: 61, w: 90, h: 8.6, label: 'Chest Press', go: 'f3' }] },
+    f3: { cap: '做組畫面：3D 人體標出正在練的肌群', sub: '做完按「完成」', hots: [{ x: 1.7, y: 3.3, w: 10, h: 5.6, label: '結束運動', go: 'f1' }, { x: 43, y: 80.4, w: 14, h: 6.8, label: '完成', go: 'f4' }] },
+    f4: { cap: '組間休息自動倒數，下一組的重量和次數先排好', sub: '點「開始正式組」回到做組', hots: [{ x: 1.7, y: 3.3, w: 10, h: 5.6, label: '結束運動', go: 'f1' }, { x: 25, y: 83.8, w: 25, h: 4.6, label: '開始正式組', go: 'f3' }] },
+    f5: { cap: '訓練紀錄：哪裡剛練完、哪裡該加強', sub: '示範資料沒有訓練紀錄，所以全身都是綠色', hots: [{ ...BACK(5.8, 5.7), back: false, go: 'f1' }] },
+    s1: { cap: '多種免費主題，點一下就換', sub: '這裡的示範畫面都是星夜主題', hots: [BACK(6.7, 8.6), { x: 13, y: 89.6, w: 74, h: 5, label: '就用星夜', back: true }] },
   };
   const $ = (q) => document.querySelector(q);
   const screen = $('#screen'), shot = $('#shot'), cap = $('#cap');
-  let timer;
-  function go(id) {
+  let timer, home = 'c1'; // 返回 = 回到最後待過的分頁(鬧鐘 / 行事曆 / 待辦)
+  function go(id, note) {
     clearTimeout(timer);
     const st = S[id];
+    if (st.nav) home = id;
     shot.src = `assets/shots/${id}.webp`;
     shot.alt = `OwnITime 實際畫面：${st.cap}`;
-    cap.innerHTML = `${st.cap}<small>${st.sub}</small>`;
-    screen.querySelectorAll('.hot').forEach((n) => n.remove());
+    cap.innerHTML = note ? `${note}<small>${st.sub}</small>` : `${st.cap}<small>${st.sub}</small>`;
+    screen.querySelectorAll('.hot, .mx').forEach((n) => n.remove());
+    if (st.matrix) matrix();
     [...(st.hots || []), ...(st.nav ? NAV : [])].forEach((h) => {
       const b = document.createElement('button');
       b.className = 'hot'; b.setAttribute('aria-label', h.label);
@@ -435,13 +478,85 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
         screen.classList.remove('fresh');
         $('#after-try').hidden = false;
         if (h.talk) return listen(h.talk);
-        go(h.go);
+        if (h.back) return go(home);
+        go(h.go, h.note);
       });
       screen.appendChild(b);
     });
     if (st.auto) timer = setTimeout(() => go(st.auto[0]), st.auto[1]);
   }
-  Object.keys(S).forEach((id) => { new Image().src = `assets/shots/${id}.webp`; }); // 先載入,切換時不閃
+
+  // ---------- 四象限:空矩陣截圖(t0)上疊可拖曳的待辦;樣式照 App 截圖量的 ----------
+  // 格子:[left, top, width, height](%),順序 = App 的象限編號 2,1,4,3 在畫面上的位置
+  const CELLS = { 2: [6.5, 20.5, 43, 28.5], 1: [52.3, 20.5, 43.5, 28.5], 4: [6.5, 50.3, 43, 28.5], 3: [52.3, 50.3, 43.5, 28.5] };
+  const QC = { 1: '#ff8a6b', 2: '#00d2c8', 3: '#e0892b', 4: '#7c8b99' };
+  const EMPTY = { 2: [23.1, 36.8, 9.9, 2.6], 1: [69.1, 36.8, 9.9, 2.6], 4: [23.1, 66.6, 9.9, 2.6], 3: [69.1, 66.6, 9.9, 2.6] }; // 「無待辦」字的位置
+  let todos = [
+    { id: 1, q: 2, t: '規劃下季目標' }, { id: 2, q: 2, t: '每週三次跑步' },
+    { id: 3, q: 4, t: '整理雲端相簿' }, { id: 4, q: 4, t: '研究新相機' },
+    { id: 5, q: 3, t: '繳電費' }, { id: 6, q: 3, t: '回覆群組訊息' },
+  ];
+  const cellAt = (px, py) => { const r = screen.getBoundingClientRect(); const x = (px - r.left) / r.width * 100, y = (py - r.top) / r.height * 100;
+    return Object.keys(CELLS).map(Number).find((q) => { const [l, t, w, h] = CELLS[q]; return x >= l && x <= l + w && y >= t && y <= t + h; }); };
+  function matrix() {
+    screen.querySelectorAll('.mx').forEach((n) => n.remove());
+    Object.keys(CELLS).map(Number).forEach((q) => {
+      const [l, t] = CELLS[q], list = todos.filter((x) => x.q === q);
+      if (list.length) {
+        const [el, et, ew, eh] = EMPTY[q], cover = document.createElement('div'); // 有待辦就蓋掉截圖上的「無待辦」
+        cover.className = 'mx mx-cover';
+        Object.assign(cover.style, { left: el + '%', top: et + '%', width: ew + '%', height: eh + '%', backgroundPosition: `${el / (100 - ew) * 100}% ${et / (100 - eh) * 100}%`, backgroundSize: `${100 / ew * 100}% ${100 / eh * 100}%` });
+        screen.appendChild(cover);
+        const n = document.createElement('span'); n.className = 'mx mx-count'; n.textContent = list.length;
+        Object.assign(n.style, { left: (q === 2 || q === 4 ? 37.5 : 83.4) + '%', top: (t + 2) + '%', color: QC[q] });
+        screen.appendChild(n);
+      }
+      list.slice(0, 5).forEach((it, i) => {
+        const row = document.createElement('div');
+        row.className = 'mx mx-row'; row.dataset.id = it.id;
+        Object.assign(row.style, { left: (l + 1.4) + '%', top: (t + 5.9 + i * 3.94) + '%', width: (CELLS[q][2] - 2.8) + '%' });
+        row.innerHTML = '<button class="mx-ck" aria-label="完成"></button><span></span>';
+        row.querySelector('span').textContent = it.t;
+        screen.appendChild(row);
+      });
+    });
+  }
+  // 長按拖曳(跟 App 一樣長按才拖,不擋手機捲動頁面);點圓圈 = 完成
+  let drag = null, press = null;
+  screen.addEventListener('pointerdown', (e) => {
+    const row = e.target.closest('.mx-row'); if (!row) return;
+    if (e.target.closest('.mx-ck')) {
+      const it = todos.find((x) => x.id == row.dataset.id); row.classList.add('done');
+      setTimeout(() => { todos = todos.filter((x) => x !== it); go('t0', `已完成：${it.t}`); }, 350);
+      return;
+    }
+    press = { row, x: e.clientX, y: e.clientY, id: e.pointerId, t: setTimeout(() => {
+      drag = { row, dx: e.clientX, dy: e.clientY }; row.classList.add('lift'); try { row.setPointerCapture(press.id); } catch (_) {}
+      navigator.vibrate && navigator.vibrate(15);
+    }, 280) };
+  });
+  screen.addEventListener('pointermove', (e) => {
+    if (press && !drag && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) { clearTimeout(press.t); press = null; }
+    if (!drag) return;
+    drag.row.style.transform = `translate(${e.clientX - drag.dx}px, ${e.clientY - drag.dy}px)`;
+    screen.querySelectorAll('.mx-drop').forEach((n) => n.remove());
+    const q = cellAt(e.clientX, e.clientY);
+    if (q) { const [l, t, w, h] = CELLS[q], d = document.createElement('div'); d.className = 'mx mx-drop'; Object.assign(d.style, { left: l + '%', top: t + '%', width: w + '%', height: h + '%', borderColor: QC[q] }); screen.appendChild(d); }
+  });
+  document.addEventListener('touchmove', (e) => { if (drag) e.preventDefault(); }, { passive: false });
+  const end = (e) => {
+    if (press) { clearTimeout(press.t); press = null; }
+    if (!drag) return;
+    const q = cellAt(e.clientX, e.clientY), it = todos.find((x) => x.id == drag.row.dataset.id);
+    drag = null;
+    if (q && it && q !== it.q) { todos = todos.filter((x) => x !== it).concat({ ...it, q }); go('t0', `「${it.t}」移到「${{ 1: '立刻做', 2: '排時間做', 3: '快速解決', 4: '有空再說' }[q]}」`); }
+    else matrix();
+  };
+  screen.addEventListener('pointerup', end);
+  screen.addEventListener('pointercancel', end);
+  screen.addEventListener('contextmenu', (e) => { if (e.target.closest('.mx-row')) e.preventDefault(); });
+
+  Object.keys(S).concat('t0c').forEach((id) => { new Image().src = `assets/shots/${id}.webp`; }); // 先載入,切換時不閃
   // ---------- 直接用說的:瀏覽器辨識 + App 同一套解析(assets/voice-parser.js 由 App 的 Dart 解析器編譯) ----------
   const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
   const talk = $('#talk'), tStatus = $('#talk-status'), tSaid = $('#talk-said'), tResult = $('#talk-result');
@@ -491,7 +606,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
   }
   $('#talk-form').addEventListener('submit', (e) => { e.preventDefault(); tStatus.textContent = '用 App 的規則解析：'; show($('#talk-input').value.trim()); });
 
-  const START = { cal: 'c1', todo: 't1', voice: 'v1' };
+  const START = { cal: 'c1', todo: 't0', voice: 'v1' };
   document.querySelectorAll('[data-try]').forEach((b) => b.addEventListener('click', () => {
     go(START[b.dataset.try]); screen.classList.add('fresh');
     $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' });
