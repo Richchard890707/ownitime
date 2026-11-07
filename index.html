@@ -123,6 +123,24 @@ nav a:hover { color: var(--ink); }
 .talk input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 8px 10px; font: 400 .92rem/1.2 var(--body); }
 .talk button { border: 0; border-radius: 10px; padding: 0 14px; background: var(--accent); color: var(--accent-ink); font: 700 .9rem/1 var(--body); cursor: pointer; }
 .talk .fine { font-size: .75rem; }
+.listening { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; align-content: center; gap: 22px; text-align: center; color: #eafff7;
+  background: rgba(3, 12, 10, .86); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  padding: calc(24px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); }
+.listening[hidden] { display: none; }
+.big-mic { position: relative; width: 132px; height: 132px; border-radius: 50%; background: #3fd6ae; color: #062019; display: grid; place-items: center; }
+.big-mic svg { width: 58px; height: 58px; }
+.big-mic::before, .big-mic::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 3px solid #3fd6ae; animation: ring 1.6s ease-out infinite; }
+.big-mic::after { animation-delay: .8s; }
+.listening.waiting .big-mic { background: #2b4a43; color: #9fcfc2; }
+.listening.waiting .big-mic::before, .listening.waiting .big-mic::after { animation: none; opacity: 0; }
+@keyframes ring { from { opacity: .8; scale: .92; } to { opacity: 0; scale: 1.5; } }
+.listening h2 { font: 700 clamp(1.5rem, 5vw, 2.1rem)/1.3 var(--display); color: #eafff7; }
+.listening .eg { font-size: .95rem; color: #9fcfc2; max-width: 22em; }
+.listening .live { font: 400 clamp(1.15rem, 4.4vw, 1.5rem)/1.5 var(--display); min-height: 1.6em; max-width: 20em; color: #fff; }
+.listening .acts { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.listening .acts button { border: 0; border-radius: 999px; padding: 13px 26px; font: 700 1rem/1 var(--body); cursor: pointer; }
+.listening .done { background: #3fd6ae; color: #062019; }
+.listening .cancel { background: rgba(255, 255, 255, .12); color: #eafff7; }
 .after-try { font-size: .9rem; }
 .after-try a { color: var(--accent); font-weight: 700; }
 @media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
@@ -221,6 +239,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
         <dl id="talk-result"></dl>
         <form id="talk-form"><input id="talk-input" aria-label="打一句話試試" placeholder="也可以打字：明天早上七點半提醒我拿包裹" autocomplete="off"><button type="submit">解析</button></form>
         <p class="fine">用的是 App 裡同一套解析規則。語音由你的瀏覽器辨識（Chrome 會交給 Google、Safari 交給 Apple），這個網站不會保存。</p>
+      </div>
+      <div class="listening" id="listening" role="dialog" aria-modal="true" aria-label="正在聽你說話" hidden>
+        <div class="big-mic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></div>
+        <h2 id="ls-title">正在聽，請說話</h2>
+        <p class="live" id="ls-live" aria-live="polite"></p>
+        <p class="eg" id="ls-eg"></p>
+        <div class="acts"><button class="done" id="ls-done" type="button">我說完了</button><button class="cancel" id="ls-cancel" type="button">取消</button></div>
       </div>
       <p class="after-try" id="after-try" hidden>喜歡的話，<a href="https://play.google.com/store/apps/details?id=com.ownitime.app" target="_blank" rel="noopener">到 Google Play 下載 OwnITime</a></p>
     </div>
@@ -443,17 +468,26 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     tResult.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd></dd>`).join('');
     tResult.querySelectorAll('dd').forEach((dd, i) => { dd.textContent = rows[i][1]; });
   }
+  const ls = $('#listening'), lsTitle = $('#ls-title'), lsLive = $('#ls-live');
+  const EG = { 鬧鐘: '例如「明天早上七點半提醒我拿包裹」', 行程: '例如「下午兩點到四點上課 標籤學校」', 待辦: '例如「重要又緊急 繳電話費」' };
+  const closeLs = () => { ls.hidden = true; };
+  $('#ls-done').addEventListener('click', () => { try { rec && rec.stop(); } catch (_) {} closeLs(); });
+  $('#ls-cancel').addEventListener('click', () => { try { rec && rec.abort(); } catch (_) {} closeLs(); tStatus.textContent = '已取消。'; show(''); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ls.hidden) $('#ls-cancel').click(); });
   function listen(k) {
     kind = k; talk.hidden = false; show('');
-    talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    if (!Rec) { tStatus.textContent = '這個瀏覽器不支援語音輸入(建議用 Chrome 或 Safari)，可以在下面打字試試。'; return; }
+    if (!Rec) { tStatus.textContent = '這個瀏覽器不支援語音輸入(建議用 Chrome 或 Safari)，可以在下面打字試試。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
     try { rec && rec.abort(); } catch (_) {}
     rec = new Rec(); rec.lang = 'zh-TW'; rec.interimResults = true; rec.maxAlternatives = 1;
-    tStatus.textContent = `正在聽…說一句要建立的${k}，例如「明天早上七點半提醒我拿包裹」`;
-    rec.onresult = (e) => { const t = [...e.results].map((r) => r[0].transcript).join(''); show(t); };
-    rec.onerror = (e) => { tStatus.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? '沒有拿到麥克風權限。請在瀏覽器網址列旁允許麥克風，或在下面打字試試。' : '沒聽清楚，再點一次麥克風，或在下面打字試試。'; };
-    rec.onend = () => { if (tStatus.textContent.startsWith('正在聽')) tStatus.textContent = tSaid.textContent ? '聽完了。App 裡會先讓你確認，再建立。' : '沒聽到聲音，再點一次麥克風試試。'; };
-    try { rec.start(); } catch (_) { tStatus.textContent = '麥克風沒辦法啟動，可以在下面打字試試。'; }
+    // 滿版遮罩:先顯示「等麥克風權限」,真的開始收音才變成「正在聽」
+    ls.hidden = false; ls.classList.add('waiting'); lsTitle.textContent = '請允許使用麥克風'; lsLive.textContent = ''; $('#ls-eg').textContent = `說一句要建立的${k}，${EG[k]}`;
+    $('#ls-done').focus();
+    tStatus.textContent = '正在聽…';
+    rec.onstart = () => { ls.classList.remove('waiting'); lsTitle.textContent = '正在聽，請說話'; };
+    rec.onresult = (e) => { const t = [...e.results].map((r) => r[0].transcript).join(''); lsLive.textContent = `「${t}」`; show(t); };
+    rec.onerror = (e) => { closeLs(); tStatus.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? '沒有拿到麥克風權限。請在瀏覽器網址列旁允許麥克風，或在下面打字試試。' : e.error === 'aborted' ? tStatus.textContent : '沒聽清楚，再點一次麥克風，或在下面打字試試。'; };
+    rec.onend = () => { closeLs(); if (tStatus.textContent.startsWith('正在聽')) tStatus.textContent = tSaid.textContent ? '聽完了。App 裡會先讓你確認，再建立。' : '沒聽到聲音，再點一次麥克風試試。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+    try { rec.start(); } catch (_) { closeLs(); tStatus.textContent = '麥克風沒辦法啟動，可以在下面打字試試。'; }
   }
   $('#talk-form').addEventListener('submit', (e) => { e.preventDefault(); tStatus.textContent = '用 App 的規則解析：'; show($('#talk-input').value.trim()); });
 
