@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OwnITime | Shared calendar, priority matrix and voice alarms for Android</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="OwnITime keeps a shared calendar, a priority matrix for your todos and voice alarms in one Android app. Try the main features right on this page before you download. Some features require a subscription.">
+<meta property="og:title" content="OwnITime | Shared calendar, priority matrix and voice alarms for Android">
+<meta property="og:description" content="Calendar, todos and alarms in one app. Try it on this page before you download.">
+<meta property="og:image" content="https://richchard890707.github.io/ownitime/../assets/icon.png">
+<meta property="og:url" content="https://richchard890707.github.io/ownitime/en/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://richchard890707.github.io/ownitime/en/">
+<link rel="alternate" hreflang="zh-Hant" href="https://richchard890707.github.io/ownitime/">
+<link rel="alternate" hreflang="en" href="https://richchard890707.github.io/ownitime/en/">
+<link rel="alternate" hreflang="x-default" href="https://richchard890707.github.io/ownitime/en/">
+<link rel="icon" href="../assets/icon.png">
+<script src="../assets/voice-parser.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=DM+Mono:wght@400;500&family=Roboto+Mono:wght@300;400&display=swap">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OwnITime","operatingSystem":"Android","applicationCategory":"ProductivityApplication","description":"A shared calendar, a priority matrix and voice alarms in one app.","offers":{"@type":"Offer","price":"0","priceCurrency":"TWD"},"downloadUrl":"https://play.google.com/store/apps/details?id=com.ownitime.app&hl=en"}
+</script>
+<style>
+
+:root {
+  --bg: #edf2ee;          
+  --surface: #f8fbf8;
+  --line: #d3ded6;
+  --ink: #143a30;         
+  --ink-dim: #4f6b62;
+  --accent: #13735f;      
+  --accent-ink: #ffffff;
+  --coral: #e0705f;       
+  --lilac: #8a7bd6;       
+  --amber: #d9962b;
+  --phone-bg: #f4f8f5;
+  --phone-card: #ffffff;
+  --shadow: 0 30px 60px -30px rgba(20, 58, 48, .35);
+  --display: "LXGW WenKai TC", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", serif;
+  --body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1614; --surface: #10201d; --line: #1f3a34;
+    --ink: #e3f1ec; --ink-dim: #93b2a8; --accent: #3fd6ae; --accent-ink: #062019;
+    --coral: #f08a78; --lilac: #a99cf0; --amber: #f0b44e;
+    --phone-bg: #0e1b19; --phone-card: #142824;
+    --shadow: 0 30px 70px -30px rgba(0, 0, 0, .8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1614; --surface: #10201d; --line: #1f3a34;
+  --ink: #e3f1ec; --ink-dim: #93b2a8; --accent: #3fd6ae; --accent-ink: #062019;
+  --coral: #f08a78; --lilac: #a99cf0; --amber: #f0b44e;
+  --phone-bg: #0e1b19; --phone-card: #142824;
+  --shadow: 0 30px 70px -30px rgba(0, 0, 0, .8);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.75 var(--body); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: inherit; }
+img, video { max-width: 100%; display: block; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.25; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.3rem, 5.4vw, 3.9rem); letter-spacing: .01em; }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0; }
+.eyebrow { font: 500 .8rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.bar { display: flex; align-items: center; gap: 20px; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font: 700 1.1rem/1 var(--body); text-decoration: none; }
+.brand img { width: 32px; height: 32px; border-radius: 9px; }
+nav { display: flex; gap: 18px; margin-left: auto; font-size: .92rem; color: var(--ink-dim); }
+nav a { text-decoration: none; }
+nav a:hover { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 12px 22px; font: 700 1rem/1 var(--body); text-decoration: none; cursor: pointer; transition: transform .15s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+.btn-sm { padding: 9px 16px; font-size: .9rem; }
+.play-ic { width: 18px; height: 18px; }
+@media (max-width: 760px) { nav { display: none; } .bar .btn { margin-left: auto; } }
+
+
+.hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; padding-block: 56px 72px; }
+.hero > * { min-width: 0; }
+.hero-copy { display: grid; gap: 22px; }
+.lede { font-size: 1.12rem; color: var(--ink-dim); max-width: 32em; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: .85rem; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-dim); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.fine { font-size: .82rem; color: var(--ink-dim); }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 36px; padding-block: 36px 56px; } .hero .chips { display: none; } }
+
+
+.stage { display: grid; justify-items: center; gap: 14px; }
+.phone { width: min(320px, 100%); background: #050807; border-radius: 44px; padding: 10px; box-shadow: var(--shadow); }
+.screen { position: relative; aspect-ratio: 9 / 20; border-radius: 34px; overflow: hidden; background: #0b1614; }
+.screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .25s ease; }
+.hot { position: absolute; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 12px; }
+.hot::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; border: 1.5px solid rgba(76, 215, 201, .28); }
+.hot:hover::after, .hot:focus-visible::after { border-color: #4cd7c9; background: rgba(76, 215, 201, .12); }
+.screen.fresh .hot::after { animation: tap 1.6s ease-out 3; }
+.hot.main::after { border-color: #4cd7c9; animation: tap 1.6s ease-out infinite; }
+@keyframes tap { 0% { box-shadow: 0 0 0 0 rgba(76, 215, 201, .55); } 100% { box-shadow: 0 0 0 14px rgba(76, 215, 201, 0); } }
+.cap { min-height: 3.2em; max-width: 22em; text-align: center; font-size: .95rem; color: var(--ink); }
+.cap small { display: block; color: var(--ink-dim); font-size: .82rem; margin-top: 2px; }
+.talk { width: min(340px, 100%); display: grid; gap: 8px; padding: 14px 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.talk[hidden] { display: none; }
+.talk .said { font-family: var(--display); font-size: 1.05rem; min-height: 1.6em; }
+.talk .status { font-size: .82rem; color: var(--ink-dim); }
+.talk dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: .92rem; }
+.talk dt { color: var(--ink-dim); }
+.talk dd { margin: 0; }
+.talk form { display: flex; gap: 6px; }
+.talk input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 8px 10px; font: 400 .92rem/1.2 var(--body); }
+.talk button { border: 0; border-radius: 10px; padding: 0 14px; background: var(--accent); color: var(--accent-ink); font: 700 .9rem/1 var(--body); cursor: pointer; }
+.talk .fine { font-size: .75rem; }
+.listening { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; align-content: center; gap: 22px; text-align: center; color: #eafff7;
+  background: rgba(3, 12, 10, .86); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  padding: calc(24px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); }
+.listening[hidden] { display: none; }
+.big-mic { position: relative; width: 132px; height: 132px; border-radius: 50%; background: #3fd6ae; color: #062019; display: grid; place-items: center; }
+.big-mic svg { width: 58px; height: 58px; }
+.big-mic::before, .big-mic::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 3px solid #3fd6ae; animation: ring 1.6s ease-out infinite; }
+.big-mic::after { animation-delay: .8s; }
+.listening.waiting .big-mic { background: #2b4a43; color: #9fcfc2; }
+.listening.waiting .big-mic::before, .listening.waiting .big-mic::after { animation: none; opacity: 0; }
+@keyframes ring { from { opacity: .8; scale: .92; } to { opacity: 0; scale: 1.5; } }
+.listening h2 { font: 700 clamp(1.5rem, 5vw, 2.1rem)/1.3 var(--display); color: #eafff7; }
+.listening .eg { font-size: .95rem; color: #9fcfc2; max-width: 22em; }
+.listening .live { font: 400 clamp(1.15rem, 4.4vw, 1.5rem)/1.5 var(--display); min-height: 1.6em; max-width: 20em; color: #fff; }
+.listening .acts { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.listening .acts button { border: 0; border-radius: 999px; padding: 13px 26px; font: 700 1rem/1 var(--body); cursor: pointer; }
+.listening .done { background: #3fd6ae; color: #062019; }
+.listening .cancel { background: rgba(255, 255, 255, .12); color: #eafff7; }
+.screen { container-type: inline-size; }
+.mx { position: absolute; }
+.mx-cover { background-image: url(../assets/shots/t0c.webp); }
+.mx-count { font: 500 3.3cqw/1 var(--body); translate: -50% -50%; }
+.mx-row { height: 3.1%; display: flex; align-items: center; gap: 2.8cqw; padding-left: 3.3cqw; background: rgba(15, 26, 36, .78); border-radius: 1.2cqw; color: #e8f2f5; font: 400 3.3cqw/1 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: grab; z-index: 2; }
+.mx-row span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 2cqw; }
+.mx-ck { flex: none; width: 2.3cqw; height: 2.3cqw; padding: 0; border-radius: 50%; border: .33cqw solid #869197; background: none; cursor: pointer; position: relative; }
+.mx-ck::before { content: ""; position: absolute; inset: -2cqw; }
+.mx-row.done span { text-decoration: line-through; color: #869197; }
+.mx-row.done .mx-ck { background: #869197; }
+.mx-row.lift { z-index: 5; box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, .55); outline: .3cqw solid #4cd7c9; cursor: grabbing; }
+.mx-drop { border: .4cqw dashed; border-radius: 3cqw; pointer-events: none; }
+.al-card { left: 0; width: 100%; height: 12.05%; background-repeat: no-repeat; z-index: 1; }
+.al-card.new { background-image: url(../assets/shots/alarm_card.webp); background-size: 100% 100%; }
+.al-card b, .al-card i, .al-card em, .al-card small, .al-card span { position: absolute; font-style: normal; white-space: nowrap; translate: 0 -50%; }
+.al-card b { left: 5.1%; top: 28.6%; font: 300 6.2cqw/1 "Roboto Mono", ui-monospace, monospace; color: #f2f7f8; text-shadow: 0 0 1.4cqw rgba(120, 220, 220, .35); letter-spacing: .02em; }
+.al-card i { left: 30.1%; top: 40%; font: 500 3.9cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #eef4f5; }
+.al-card em { left: 30%; top: 63%; font: 400 2.5cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #cfd8dc; background: rgba(255, 255, 255, .07); border-radius: 1cqw; padding: 1.3cqw 2cqw; }
+.al-card small { left: 5.1%; top: 62%; font: 400 2.8cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #6b757a; }
+.al-card span { left: 5.1%; top: 78%; font: 400 2.5cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #00d2c8; }
+.al-card.flash { animation: flash 1.2s ease-out 2; }
+@keyframes flash { 50% { filter: brightness(1.6); } }
+.ev-chip { height: 1.4%; display: flex; align-items: center; padding-left: .9cqw; border-left: .5cqw solid #00acc1; background: #055763; border-radius: .5cqw; color: #e8f6f8; font: 400 2.1cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; overflow: hidden; white-space: nowrap; z-index: 1; animation: flash 1.2s ease-out 2; }
+.lang-hint { margin: 0; padding: 8px 16px; text-align: center; font-size: .9rem; background: var(--surface); border-bottom: 1px solid var(--line); }
+.lang-hint a { color: var(--accent); font-weight: 700; }
+.after-try { font-size: .9rem; }
+.after-try a { color: var(--accent); font-weight: 700; }
+@media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
+
+
+section { padding-block: 72px; }
+.band { background: var(--surface); border-block: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; max-width: 40em; margin-bottom: 36px; }
+.sec-head p { color: var(--ink-dim); }
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat { display: grid; gap: 12px; align-content: start; padding: 26px; border-radius: 22px; background: var(--bg); border: 1px solid var(--line); }
+.feat ul { margin: 0; padding-left: 1.1em; color: var(--ink-dim); font-size: .95rem; display: grid; gap: 4px; }
+.feat .btn { justify-self: start; margin-top: 6px; }
+.feat .k { font: 500 .78rem/1 var(--mono); color: var(--accent); letter-spacing: .1em; }
+@media (max-width: 900px) { .trio { grid-template-columns: 1fr; } }
+.film { display: grid; grid-template-columns: minmax(0, 300px) 1fr; gap: 48px; align-items: center; }
+.film video { width: 100%; border-radius: 26px; box-shadow: var(--shadow); background: #0b1614; aspect-ratio: 9 / 16; object-fit: cover; }
+.film-copy { display: grid; gap: 14px; }
+.steps { display: grid; gap: 12px; margin-top: 8px; }
+.step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+.step b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); font: 500 .9rem/1 var(--mono); }
+.step p { color: var(--ink-dim); }
+@media (max-width: 760px) { .film { grid-template-columns: 1fr; justify-items: center; } .film-copy { justify-self: stretch; } }
+.more { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.more article { padding: 20px 22px; border-radius: 18px; background: var(--bg); border: 1px solid var(--line); display: grid; gap: 6px; align-content: start; }
+.more h3 { font-size: 1.1rem; }
+.more p { color: var(--ink-dim); font-size: .93rem; }
+.paid { font: 500 .72rem/1 var(--mono); color: var(--amber); letter-spacing: .06em; }
+.themes { display: grid; grid-template-columns: 1fr minmax(0, 320px); gap: 48px; align-items: center; }
+.themes img { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 24px; box-shadow: var(--shadow); }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.swatches span { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: .9rem; }
+.swatches i { width: 22px; height: 22px; border-radius: 50%; }
+@media (max-width: 760px) { .themes { grid-template-columns: 1fr; } .themes img { max-width: 300px; justify-self: center; } }
+.privacy { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.privacy div { display: grid; gap: 6px; }
+.privacy p { color: var(--ink-dim); font-size: .95rem; }
+details { border-bottom: 1px solid var(--line); padding-block: 16px; }
+summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::after { content: "+"; font: 400 1.3rem/1 var(--mono); color: var(--accent); }
+details[open] summary::after { content: "−"; }
+details p { margin-top: 10px; color: var(--ink-dim); max-width: 46em; }
+.final { text-align: center; display: grid; justify-items: center; gap: 18px; }
+.final h2 { font-size: clamp(1.9rem, 4vw, 2.9rem); }
+footer { padding-block: 32px 48px; border-top: 1px solid var(--line); font-size: .85rem; color: var(--ink-dim); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top"><img src="../assets/icon.png" alt="" width="32" height="32">OwnITime</a>
+    <nav aria-label="Page navigation">
+      <a href="#features">Features</a>
+      <a href="#film">Video</a>
+      <a href="#more">More</a>
+      <a href="#faq">FAQ</a>
+      <a href="../" hreflang="zh-Hant" lang="zh-Hant" data-lang>中文</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="https://play.google.com/store/apps/details?id=com.ownitime.app&hl=en" target="_blank" rel="noopener">
+      <svg class="play-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>Get it on Google Play
+    </a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Own Your Time</span>
+      <h1>Your plans, todos and alarms.<br>One calm app.</h1>
+      <p class="lede">OwnITime brings together a shared calendar, a priority matrix for your todos and alarms you can set by voice. Line up plans with your family or partner, see what matters first, and capture things the moment you think of them. The phone on this page shows real app screens. Tap around and see if it fits your life.</p>
+      <div class="chips" aria-label="Other features">
+        <span class="chip">Period tracking</span><span class="chip">Shift alarms</span><span class="chip">Cooking timers</span><span class="chip">Workout log</span><span class="chip">Lunar dates and holidays</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://play.google.com/store/apps/details?id=com.ownitime.app&hl=en" target="_blank" rel="noopener">
+          <svg class="play-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>Get it on Google Play
+        </a>
+        <a class="btn btn-ghost" href="#demo">Try it first</a>
+      </div>
+      <p class="fine">For Android. Free to download. Some features require a subscription.</p>
+    </div>
+
+    <div class="stage" id="demo">
+      <p class="cap" style="min-height:0"><small>Every button on the phone works. Switch between Alarms, Calendar and Todo at the bottom. Screens are in Chinese until the English app ships.</small></p>
+      <div class="phone">
+        <div class="screen" id="screen">
+          <img id="shot" src="../assets/shots/c1.webp" alt="" width="720" height="1600">
+        </div>
+      </div>
+      <p class="cap" id="cap" aria-live="polite"></p>
+      <div class="talk" id="talk" hidden aria-live="polite">
+        <p class="status" id="talk-status"></p>
+        <p class="said" id="talk-said"></p>
+        <dl id="talk-result"></dl>
+        <form id="talk-form" hidden><input id="talk-input" aria-label="Type a sentence" placeholder="Type a sentence" autocomplete="off"><button type="submit">Parse</button></form>
+        <p class="fine" hidden>Uses the same parsing rules as the app. Speech is recognized by your browser (Chrome uses Google, Safari uses Apple). This site does not store it.</p>
+      </div>
+      <div class="listening" id="listening" role="dialog" aria-modal="true" aria-label="Listening" hidden>
+        <div class="big-mic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></div>
+        <h2 id="ls-title">Listening. Go ahead.</h2>
+        <p class="live" id="ls-live" aria-live="polite"></p>
+        <p class="eg" id="ls-eg"></p>
+        <div class="acts"><button class="done" id="ls-done" type="button">Done</button><button class="cancel" id="ls-cancel" type="button">Cancel</button></div>
+      </div>
+      <p class="after-try" id="after-try" hidden>Like it? <a href="https://play.google.com/store/apps/details?id=com.ownitime.app&hl=en" target="_blank" rel="noopener">Get OwnITime on Google Play</a></p>
+    </div>
+  </div>
+
+  <section class="band" id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Features</span>
+        <h2>Before you download, tap around the phone above</h2>
+        <p>The phone shows real app screens with sample data, in Chinese for now. Sharing needs two signed in people, so it is described here instead.</p>
+      </div>
+      <div class="trio">
+        <article class="feat">
+          <span class="k">SHARED CALENDAR</span>
+          <h3>Shared calendar</h3>
+          <p>Share your calendar with family, a partner or coworkers. Both of you can add and edit plans.</p>
+          <ul>
+            <li>Show them only "Busy" and keep the details to yourself</li>
+            <li>Your period, todos and anniversaries are never shared</li>
+            <li>Multi-day trips show as one continuous bar</li>
+          </ul>
+          <button class="btn btn-ghost btn-sm" data-try="cal">See the calendar</button>
+        </article>
+        <article class="feat">
+          <span class="k">PRIORITY MATRIX</span>
+          <h3>Priority matrix</h3>
+          <p>Sort todos by importance and urgency, and see at a glance what to do first.</p>
+          <ul>
+            <li>Switch between list and matrix in one tap</li>
+            <li>Checked items move to Completed, so nothing gets lost</li>
+            <li>Check things off right from the home screen widget</li>
+          </ul>
+          <button class="btn btn-ghost btn-sm" data-try="todo">Try it on the phone</button>
+        </article>
+        <article class="feat">
+          <span class="k">VOICE ALARM</span>
+          <h3>Voice alarms</h3>
+          <p>Say one sentence to set an alarm or add a plan. No date pickers, no time wheels.</p>
+          <ul>
+            <li>Voice input understands Chinese today, with English on the way</li>
+            <li>Date ranges become multi-day events</li>
+            <li>Rings full screen, right on the lock screen</li>
+          </ul>
+          <button class="btn btn-ghost btn-sm" data-try="voice">Try it on the phone</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="film">
+    <div class="wrap film">
+      <video src="../assets/voice-reel.mp4" poster="../assets/voice-reel-poster.jpg" controls muted playsinline preload="metadata" aria-label="Voice alarm demo video"></video>
+      <div class="film-copy">
+        <span class="eyebrow">In action (Chinese UI)</span>
+        <h2>Remembered a morning meeting at 11 p.m.? Just say it.</h2>
+        <p class="lede">Your hands are full and you don’t want to tap through menus. Say it once and the alarm is set.</p>
+        <div class="steps">
+          <div class="step"><b>1</b><p>Tap the mic and say the time and what it is for, the way you normally talk.</p></div>
+          <div class="step"><b>2</b><p>OwnITime works out whether it is an alarm, a plan or a todo, and fills in the date and time.</p></div>
+          <div class="step"><b>3</b><p>Check it once and you are done. Tap in if you want to adjust.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="more">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">And more</span>
+        <h2>Everything you plan your time around, in one place</h2>
+        <p>No separate app for every task. Turn on what you use and tuck away the rest.</p>
+      </div>
+      <div class="more">
+        <article><h3>Period tracking</h3><p>Log day by day on the same calendar. It predicts your next period from your history and can remind you a few days ahead.</p></article>
+        <article><h3>Shift alarms</h3><p>Repeats every few days, counted from the day you choose. Skip one day without touching the rest.</p></article>
+        <article><h3>Anniversaries</h3><p>Anniversaries sit right on your calendar, so the day never slips by.</p><span class="paid">Subscription</span></article>
+        <article><h3>Dinner’s ready</h3><p>Run timers for several dishes at once. It works out when each one starts so everything is ready together.</p></article>
+        <article><h3>Workout log</h3><p>Log muscle groups, sets, weight and reps, with automatic rest timers between sets.</p><span class="paid">Partly subscription</span></article>
+        <article><h3>Lunar dates and holidays</h3><p>Show lunar dates on the calendar, with public holidays marked for you.</p></article>
+        <article><h3>Sitting reminder</h3><p>A nudge to get up and move after sitting too long, on a repeating cycle.</p></article>
+        <article><h3>Calendar file import</h3><p>Import .ics files to bring events over from another calendar in one go.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap themes">
+      <div class="sec-head" style="margin:0">
+        <span class="eyebrow">Themes</span>
+        <h2>Pick a look you want to open every day</h2>
+        <p>From fresh Morning Mist and warm Journal paper to quiet Starry Night. Free themes you can switch anytime. This page also follows your device’s light or dark mode.</p>
+        <div class="swatches">
+          <span><i style="background:#dfece4"></i>Morning Mist</span>
+          <span><i style="background:#efe3cf"></i>Journal</span>
+          <span><i style="background:#13302a"></i>Starry Night</span>
+        </div>
+      </div>
+      <img src="../assets/themes.webp" alt="OwnITime in the Morning Mist, Starry Night and Journal themes" width="720" height="1280" loading="lazy">
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Your data</span>
+        <h2>Your data stays on your phone</h2>
+      </div>
+      <div class="privacy">
+        <div><h3>Works offline</h3><p>Everything is stored on your own phone, so you can view and edit without a connection.</p></div>
+        <div><h3>Back up to your Google Drive</h3><p>Backups go to your own Google Drive, where you can see and download them.</p></div>
+        <div><h3>Move to a new phone</h3><p>Export everything to one file and import it on your new phone.</p></div>
+        <div><h3>Delete anytime</h3><p>Delete your account and cloud data right in the app.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">FAQ</span><h2>Good to know before you download</h2></div>
+      <details><summary>Is it free?</summary><p>It is free to download, and alarms, calendar, todos and voice input are free to use. Some features, like anniversaries and week view, need a subscription. Workouts and cooking timers have usage limits on the free plan.</p></details>
+      <details><summary>Is there an iPhone version?</summary><p>Not yet. OwnITime is on Android, available on Google Play.</p></details>
+      <details><summary>Does the other person need OwnITime to share a calendar?</summary><p>Yes. Once you both have it, scan a QR code to connect. After they accept, they can see the plans you share.</p></details>
+      <details><summary>Can my partner see my period?</summary><p>No. Sharing covers calendar events only. Your period, todos, alarms and anniversaries are never shared.</p></details>
+      <details><summary>Which languages does voice input understand?</summary><p>Chinese today. English voice input is on the way. Recognition is more accurate online and falls back to on-device recognition offline.</p></details>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap final">
+      <span class="eyebrow">Own Your Time. Embrace the moment.</span>
+      <h2>Like what you tried? Take it with you.</h2>
+      <a class="btn btn-primary" href="https://play.google.com/store/apps/details?id=com.ownitime.app&hl=en" target="_blank" rel="noopener">
+        <svg class="play-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>Get OwnITime on Google Play
+      </a>
+      <p class="fine">Free to download. Some features require a subscription.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© OwnITime</span>
+    <a href="https://richchard890707.github.io/ownitime-privacy/" target="_blank" rel="noopener">Privacy policy</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+
+  const NAV = [
+    { x: 7, y: 90, w: 23, h: 6.8, label: 'Alarms', go: 'v1' },
+    { x: 38.5, y: 90, w: 23, h: 6.8, label: 'Calendar', go: 'c1' },
+    { x: 70, y: 90, w: 23, h: 6.8, label: 'Todo', go: 't0' },
+  ];
+
+  const HDR = (y) => [{ x: 77.5, y: y - 2.6, w: 10, h: 5.2, label: 'Timers', go: 'k0' }, { x: 89, y: y - 2.6, w: 10, h: 5.2, label: 'Settings', go: 's1' }];
+  const BACK = (x, y) => ({ x: x - 5, y: y - 2.8, w: 10, h: 5.6, label: 'Back', back: true });
+  const MIC_T = { x: 63, y: 82.6, w: 9, h: 5.4, label: 'Add a todo by voice', talk: 'todo' };
+  const S = {
+    c1: { cap: 'The multi-day "Okinawa trip" shows as one bar', sub: 'Pull up the list, or tap the green "Choose calendars" icon', nav: true, hots: [...HDR(8.7),
+      { x: 33, y: 64.6, w: 34, h: 4.4, label: 'Pull up the day list', go: 'c2' }, { x: 85.5, y: 74.5, w: 10, h: 6, label: 'Add an event by voice', talk: 'event' },
+      { x: 67.5, y: 13.4, w: 10, h: 5.4, label: 'Choose calendars', go: 'c5' }, { x: 89, y: 65.6, w: 10, h: 5.4, label: 'Week view', go: 'c4' }] },
+    c2: { cap: 'The day’s plans, one card each', sub: 'Pull the list down to get back to the month', nav: true, hots: [...HDR(8.7), { x: 33, y: 21.8, w: 34, h: 4.4, label: 'Pull the list down', go: 'c1' }] },
+    c3: { cap: 'Your period is a layer on the calendar. Pink circles mark period days', sub: 'Tap "Choose calendars" to turn each layer on or off', nav: true, hots: [...HDR(6.1),
+      { x: 67.5, y: 10.7, w: 10, h: 5.4, label: 'Choose calendars', go: 'c5' }, { x: 89, y: 65.6, w: 10, h: 5.4, label: 'Week view', go: 'c4' }] },
+    c4: { cap: 'Week view is a subscription feature', sub: 'Tap back at the top left', hots: [BACK(6.7, 6.1)] },
+    c5: { cap: 'Todos, lunar dates and your period are layers. Show the ones you want', sub: 'Tap ✕ to go back to the calendar', hots: [{ x: 81.5, y: 49.7, w: 11, h: 5.6, label: 'Close', go: 'c3' }] },
+    t0: { cap: 'Todos sorted by importance and urgency', sub: 'Long press a todo to drag it to another box. Tap the circle to check it off', nav: true, matrix: true, hots: [...HDR(8.6),
+      { x: 25, y: 13.6, w: 16, h: 5, label: 'Switch to list', go: 't2' }, { x: 62.5, y: 82.6, w: 10, h: 5.6, label: 'Add a todo by voice', talk: 'todo' }] },
+    t2: { cap: 'List: the same todos, one per row', sub: 'Tap the circle to check off the first todo', nav: true, hots: [...HDR(8.7),
+      { x: 13, y: 30.6, w: 6.5, h: 4, label: 'Check off the first todo', go: 't3' }, { x: 5, y: 14, w: 17, h: 4.4, label: 'Switch to matrix', go: 't0' }, MIC_T] },
+    t3: { cap: 'After you check it off, Undo shows up at the bottom', sub: 'Tapped by mistake? Bring it right back', nav: true, auto: ['t4', 2800], hots: [{ x: 80, y: 85, w: 15, h: 4, label: 'Undo', go: 't2' }] },
+    t4: { cap: 'Done items move to Completed, always within reach', sub: 'Tap Matrix to go back', nav: true, hots: [...HDR(8.7), { x: 5, y: 14, w: 17, h: 4.4, label: 'Switch to matrix', go: 't0' }, MIC_T] },
+    v1: { cap: 'Alarms: tap a card to see it ring', sub: 'Tap the glowing 09:00 to see it ring and try Snooze, or tap the first alarm to see repeat options', nav: true, hots: [...HDR(8.7),
+      { x: 57.5, y: 81.4, w: 13, h: 6.4, label: 'Set an alarm by voice', talk: 'alarm' },
+      { x: 3, y: 39.4, w: 44, h: 9.6, label: 'Edit the wake up alarm', go: 'a2', card: true },
+      { x: 3, y: 52.6, w: 44, h: 9, label: 'See the alarm ring', go: 'v5', main: true, card: true }] },
+    a2: { cap: 'Repeat daily, on weekdays, on chosen days or every few weeks', sub: 'Tap ✕ to go back to alarms', hots: [{ x: 82, y: 12.8, w: 11, h: 5.6, label: 'Close', go: 'v1' }, BACK(6.9, 8.6)] },
+    v5: { cap: 'When it is time, the alarm fills the screen, even on the lock screen', sub: 'Tap Stop, or tap Snooze and choose how long', hots: [
+      { x: 17.5, y: 82.6, w: 63, h: 6.6, label: 'Stop', go: 'v1', note: 'Alarm stopped' },
+      { x: 17.5, y: 90.6, w: 63, h: 6, label: 'Snooze', go: 'v6', main: true }] },
+    v6: { cap: 'Snooze for 5 min, 10 min, 1 hour or until tomorrow', sub: 'Pick one', hots: [
+      { x: 18.5, y: 90.8, w: 14.5, h: 5.6, label: 'Snooze 5 minutes', go: 'v1', note: 'Snoozed 5 minutes. Rings again at 19:44' },
+      { x: 34.5, y: 90.8, w: 14.5, h: 5.6, label: 'Snooze 10 minutes', go: 'v1', note: 'Snoozed 10 minutes. Rings again at 19:49' },
+      { x: 50.6, y: 90.8, w: 14.5, h: 5.6, label: 'Snooze 1 hour', go: 'v1', note: 'Snoozed 1 hour. Rings again at 20:39' },
+      { x: 66.6, y: 90.8, w: 14.5, h: 5.6, label: 'Snooze until tomorrow', go: 'v1', note: 'Snoozed until tomorrow' },
+      { x: 17.5, y: 81.5, w: 63, h: 6.6, label: 'Stop', go: 'v1', note: 'Alarm stopped' }] },
+    k0: { cap: 'Timers: workouts, cooking and sitting reminders', sub: 'Tap workouts, cooking or the sitting reminder', hots: [BACK(6.5, 6.1),
+      { x: 5, y: 10.5, w: 90, h: 12.5, label: 'Workouts', go: 'f1' }, { x: 5, y: 25, w: 90, h: 12.3, label: 'Cooking', go: 'k1' }, { x: 5, y: 39, w: 90, h: 10.5, label: 'Sitting reminder', go: 'k2' }] },
+    k1: { cap: 'Dinner’s ready: several dishes counting down, each started at the right time', sub: 'Tap back at the top left', hots: [BACK(6.7, 6.1)] },
+    k2: { cap: 'Sitting reminder: how long to sit and how long to move', sub: 'Tap back at the top left', hots: [BACK(6.7, 6.4)] },
+    f1: { cap: '3D body: tap what you want to train', sub: 'Tap the chest, or the log at the top right to see recovery', hots: [{ x: 86, y: 3.3, w: 10, h: 5.6, label: 'Close', go: 'k0' },
+      { x: 77, y: 9.8, w: 18, h: 5, label: 'Workout log', go: 'f5' }, { x: 38, y: 22, w: 24, h: 9, label: 'Chest', go: 'f2' }, { x: 5, y: 72.6, w: 12, h: 5.4, label: 'Chest', go: 'f2' }] },
+    f2: { cap: 'Pick a muscle group to see its exercises', sub: 'Tap Chest Press to start', hots: [{ x: 86, y: 3.3, w: 10, h: 5.6, label: 'Close', go: 'f1' }, { x: 5, y: 61, w: 90, h: 8.6, label: 'Chest Press', go: 'f3' }] },
+    f3: { cap: 'During a set, the 3D body highlights the muscles you are working', sub: 'Tap Done when you finish', hots: [{ x: 1.7, y: 3.3, w: 10, h: 5.6, label: 'End workout', go: 'f1' }, { x: 43, y: 80.4, w: 14, h: 6.8, label: 'Done', go: 'f4' }] },
+    f4: { cap: 'Rest counts down on its own, with the next weight and reps ready', sub: 'Tap Start working set to continue', hots: [{ x: 1.7, y: 3.3, w: 10, h: 5.6, label: 'End workout', go: 'f1' }, { x: 25, y: 83.8, w: 25, h: 4.6, label: 'Start working set', go: 'f3' }] },
+    f5: { cap: 'Workout log: what needs rest and what needs work', sub: 'The sample data has no workouts, so the whole body is green', hots: [{ ...BACK(5.8, 5.7), back: false, go: 'f1' }] },
+    s1: { cap: 'Free themes, one tap to switch', sub: 'The demo screens use Starry Night', hots: [BACK(6.7, 8.6), { x: 13, y: 89.6, w: 74, h: 5, label: 'Use Starry Night', back: true }] },
+  };
+  const $ = (q) => document.querySelector(q);
+  const screen = $('#screen'), shot = $('#shot'), cap = $('#cap');
+  let timer, home = 'c1';
+  function go(id, note) {
+    clearTimeout(timer);
+    const st = S[id];
+    if (st.nav) home = id;
+    shot.src = `../assets/shots/${id}.webp`;
+    shot.alt = `OwnITime app screen: ${st.cap}`;
+    cap.innerHTML = note ? `${note}<small>${st.sub}</small>` : `${st.cap}<small>${st.sub}</small>`;
+    screen.querySelectorAll('.hot, .mx').forEach((n) => n.remove());
+    if (st.matrix) matrix();
+    if (id === 'v1' && alarms.length > 3) drawAlarms();
+    if (id === 'c1') drawEvents();
+    const dyn = id === 'v1' && alarms.length > 3 ? alarmHots : null;
+    [...(dyn ? st.hots.filter((h) => !h.card).concat(dyn) : st.hots || []), ...(st.nav ? NAV : [])].forEach((h) => {
+      const b = document.createElement('button');
+      b.className = h.main ? 'hot main' : 'hot'; b.setAttribute('aria-label', h.label);
+      Object.assign(b.style, { left: h.x + '%', top: h.y + '%', width: h.w + '%', height: h.h + '%' });
+      b.addEventListener('click', () => {
+        screen.classList.remove('fresh');
+        $('#after-try').hidden = false;
+        if (h.talk) return listen(h.talk);
+        if (h.back) return go(home);
+        go(h.go, h.note);
+      });
+      screen.appendChild(b);
+    });
+    if (st.auto) timer = setTimeout(() => go(st.auto[0]), st.auto[1]);
+  }
+
+
+  const alarms = [
+    { h: 6, m: 30, src: 0, go: 'a2', label: 'Edit the wake up alarm' }, { h: 9, m: 0, src: 1, go: 'v5', label: 'See the alarm ring', main: true }, { h: 19, m: 0, src: 2, go: 'v5', label: 'See the workout alarm ring' },
+  ];
+  let alarmHots = [];
+  const TOP = 38.25, PITCH = 13.1, CH = 12.05;
+  function drawAlarms() {
+    const list = alarms.slice().sort((a, b) => a.h * 60 + a.m - (b.h * 60 + b.m));
+    const ni = list.findIndex((a) => a === alarms[alarms.length - 1]);
+    const from = Math.min(Math.max(0, ni - 2), list.length - 3);
+    alarmHots = [];
+    list.slice(from, from + 3).forEach((a, i) => {
+      const top = TOP + i * PITCH, el = document.createElement('div');
+      el.className = 'mx al-card' + (a.isNew ? ' new' : '');
+      el.style.top = top + '%';
+      if (a.isNew) {
+        const mins = Math.round((a.when - NOW) / 6e4), tomorrow = a.when.toDateString() === new Date(2026, 10, 7).toDateString();
+        el.innerHTML = '<b></b><i></i><small></small><span></span>' + (a.rep ? '<em></em>' : '');
+        el.querySelector('b').textContent = `${p2(a.h)}:${p2(a.m)}`;
+        el.querySelector('i').textContent = a.title || 'Alarms';
+        el.querySelector('small').textContent = tomorrow ? 'Tomorrow' : `${a.when.getMonth() + 1}/${a.when.getDate()}`;
+        el.querySelector('span').textContent = mins > 0 ? `in ${Math.floor(mins / 60)} h ${mins % 60} min` : '';
+        if (a.rep) el.querySelector('em').textContent = '⇄ ' + a.rep;
+        if (a === alarms[alarms.length - 1]) el.classList.add('flash');
+      } else {
+        el.style.backgroundImage = 'url(../assets/shots/v1.webp)';
+        el.style.backgroundSize = `100% ${100 / CH * 100}%`;
+        el.style.backgroundPosition = `0 ${(TOP + a.src * PITCH) / (100 - CH) * 100}%`;
+      }
+      screen.appendChild(el);
+      alarmHots.push({ x: 3, y: top + 1.2, w: 44, h: 9.6, label: a.label || `See "${a.title}" ring`, go: a.go || 'v5', main: a.main });
+    });
+  }
+
+  const events = [];
+  const USED = { 6: 3, 7: 2, 8: 1, 11: 1 };
+  function drawEvents() {
+    const used = { ...USED };
+    events.forEach((e) => {
+      if (e.d.getFullYear() !== 2026 || e.d.getMonth() !== 10) return;
+      const n = e.d.getDate(), slot = used[n] || 0;
+      if (slot > 2) return;
+      used[n] = slot + 1;
+      const row = Math.floor((n - 1) / 7), col = (n - 1) % 7, el = document.createElement('div');
+      el.className = 'mx ev-chip'; el.textContent = e.title;
+      Object.assign(el.style, { left: (col * 14.3 + 0.2) + '%', width: '13.9%', top: (22.6 + row * 9.5 + 1.4 + slot * 1.6) + '%' });
+      screen.appendChild(el);
+    });
+  }
+
+
+
+  const CELLS = { 2: [6.5, 20.5, 43, 28.5], 1: [52.3, 20.5, 43.5, 28.5], 4: [6.5, 50.3, 43, 28.5], 3: [52.3, 50.3, 43.5, 28.5] };
+  const QC = { 1: '#ff8a6b', 2: '#00d2c8', 3: '#e0892b', 4: '#7c8b99' };
+  const EMPTY = { 2: [23.1, 36.8, 9.9, 2.6], 1: [69.1, 36.8, 9.9, 2.6], 4: [23.1, 66.6, 9.9, 2.6], 3: [69.1, 66.6, 9.9, 2.6] };
+  let todos = [
+    { id: 1, q: 2, t: 'Plan next quarter' }, { id: 2, q: 2, t: 'Run three times a week' },
+    { id: 3, q: 4, t: 'Sort cloud photos' }, { id: 4, q: 4, t: 'Research a new camera' },
+    { id: 5, q: 3, t: 'Pay the power bill' }, { id: 6, q: 3, t: 'Reply to the group chat' },
+  ];
+  const cellAt = (px, py) => { const r = screen.getBoundingClientRect(); const x = (px - r.left) / r.width * 100, y = (py - r.top) / r.height * 100;
+    return Object.keys(CELLS).map(Number).find((q) => { const [l, t, w, h] = CELLS[q]; return x >= l && x <= l + w && y >= t && y <= t + h; }); };
+  function matrix() {
+    screen.querySelectorAll('.mx').forEach((n) => n.remove());
+    Object.keys(CELLS).map(Number).forEach((q) => {
+      const [l, t] = CELLS[q], list = todos.filter((x) => x.q === q);
+      if (list.length) {
+        const [el, et, ew, eh] = EMPTY[q], cover = document.createElement('div');
+        cover.className = 'mx mx-cover';
+        Object.assign(cover.style, { left: el + '%', top: et + '%', width: ew + '%', height: eh + '%', backgroundPosition: `${el / (100 - ew) * 100}% ${et / (100 - eh) * 100}%`, backgroundSize: `${100 / ew * 100}% ${100 / eh * 100}%` });
+        screen.appendChild(cover);
+        const n = document.createElement('span'); n.className = 'mx mx-count'; n.textContent = list.length;
+        Object.assign(n.style, { left: (q === 2 || q === 4 ? 37.5 : 83.4) + '%', top: (t + 2) + '%', color: QC[q] });
+        screen.appendChild(n);
+      }
+      list.slice(0, 5).forEach((it, i) => {
+        const row = document.createElement('div');
+        row.className = 'mx mx-row'; row.dataset.id = it.id;
+        Object.assign(row.style, { left: (l + 1.4) + '%', top: (t + 5.9 + i * 3.94) + '%', width: (CELLS[q][2] - 2.8) + '%' });
+        row.innerHTML = '<button class="mx-ck" aria-label="Done"></button><span></span>';
+        row.querySelector('span').textContent = it.t;
+        screen.appendChild(row);
+      });
+    });
+  }
+
+  let drag = null, press = null;
+  screen.addEventListener('pointerdown', (e) => {
+    const row = e.target.closest('.mx-row'); if (!row) return;
+    if (e.target.closest('.mx-ck')) {
+      const it = todos.find((x) => x.id == row.dataset.id); row.classList.add('done');
+      setTimeout(() => { todos = todos.filter((x) => x !== it); go('t0', `Completed: ${it.t}`); }, 350);
+      return;
+    }
+    press = { row, x: e.clientX, y: e.clientY, id: e.pointerId, t: setTimeout(() => {
+      drag = { row, dx: e.clientX, dy: e.clientY }; row.classList.add('lift'); try { row.setPointerCapture(press.id); } catch (_) {}
+      navigator.vibrate && navigator.vibrate(15);
+    }, 280) };
+  });
+  screen.addEventListener('pointermove', (e) => {
+    if (press && !drag && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) { clearTimeout(press.t); press = null; }
+    if (!drag) return;
+    drag.row.style.transform = `translate(${e.clientX - drag.dx}px, ${e.clientY - drag.dy}px)`;
+    screen.querySelectorAll('.mx-drop').forEach((n) => n.remove());
+    const q = cellAt(e.clientX, e.clientY);
+    if (q) { const [l, t, w, h] = CELLS[q], d = document.createElement('div'); d.className = 'mx mx-drop'; Object.assign(d.style, { left: l + '%', top: t + '%', width: w + '%', height: h + '%', borderColor: QC[q] }); screen.appendChild(d); }
+  });
+  document.addEventListener('touchmove', (e) => { if (drag) e.preventDefault(); }, { passive: false });
+  const end = (e) => {
+    if (press) { clearTimeout(press.t); press = null; }
+    if (!drag) return;
+    const q = cellAt(e.clientX, e.clientY), it = todos.find((x) => x.id == drag.row.dataset.id);
+    drag = null;
+    if (q && it && q !== it.q) { todos = todos.filter((x) => x !== it).concat({ ...it, q }); go('t0', `Moved "${it.t}" to ${{ 1: 'Do now', 2: 'Schedule it', 3: 'Quick fixes', 4: 'Later' }[q]}`); }
+    else matrix();
+  };
+  screen.addEventListener('pointerup', end);
+  screen.addEventListener('pointercancel', end);
+  screen.addEventListener('contextmenu', (e) => { if (e.target.closest('.mx-row')) e.preventDefault(); });
+
+  Object.keys(S).concat('t0c').forEach((id) => { new Image().src = `../assets/shots/${id}.webp`; });
+
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const talk = $('#talk'), tStatus = $('#talk-status'), tSaid = $('#talk-said'), tResult = $('#talk-result');
+  const WD = { MO: 'Mon', TU: 'Tue', WE: 'Wed', TH: 'Thu', FR: 'Fri', SA: 'Sat', SU: 'Sun' };
+  const Q = { 1: 'Do now (important, urgent)', 2: 'Schedule it (important, not urgent)', 3: 'Quick fixes (urgent, not important)', 4: 'Later (neither)' };
+  const p2 = (n) => String(n).padStart(2, '0');
+  const day = (d) => `${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()]}, ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()]} ${d.getDate()}`;
+  let kind = 'alarm', rec = null, last = null, cancelled = false, heard = false;
+  const DEMO_NOW = '2026-11-06T22:32:00';
+  function show(text) {
+    last = null;
+    tSaid.textContent = text ? `「${text}」` : '';
+    tResult.innerHTML = '';
+    if (!text || !window.ownitimeParseVoice) return;
+    const c = JSON.parse(window.ownitimeParseVoice(text, DEMO_NOW)); last = c;
+    const rows = [['Add', kind], ['What', c.title || '(nothing heard)']];
+    if (c.when) {
+      const w = new Date(c.when), e = c.endAt && new Date(c.endAt);
+      if (c.allDay) { const last = e ? new Date(e - 864e5) : w; rows.push(['Date', e && last - w > 0 ? `${day(w)} to ${day(last)} (all day)` : `${day(w)} (all day)`]); }
+      else rows.push(['Time', `${day(w)} ${p2(w.getHours())}:${p2(w.getMinutes())}` + (e ? ` to ${p2(e.getHours())}:${p2(e.getMinutes())}` : '')]);
+    } else rows.push(['Time', 'No time given']);
+    const rep = c.daily ? 'Every day' : c.byWeekday.length ? 'Weekly on ' + c.byWeekday.map((x) => WD[x]).join(', ') : c.monthly ? 'Monthly' : c.yearly ? 'Yearly' : '';
+    if (rep) rows.push(['Repeat', rep]);
+    if (c.quadrant) rows.push(['Priority', Q[c.quadrant]]);
+    if (c.label) rows.push(['Label', c.label]);
+    tResult.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd></dd>`).join('');
+    tResult.querySelectorAll('dd').forEach((dd, i) => { dd.textContent = rows[i][1]; });
+  }
+  const ls = $('#listening'), lsTitle = $('#ls-title'), lsLive = $('#ls-live');
+  const EG = { alarm: '', event: '', todo: '' };
+  const closeLs = () => { ls.hidden = true; };
+  $('#ls-done').addEventListener('click', () => { try { rec && rec.stop(); } catch (_) {} closeLs(); });
+  $('#ls-cancel').addEventListener('click', () => { cancelled = true; try { rec && rec.abort(); } catch (_) {} closeLs(); tStatus.textContent = 'Canceled.'; show(''); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ls.hidden) $('#ls-cancel').click(); });
+  const EN = document.documentElement.lang === 'en';
+  function listen(k) {
+    if (EN) { talk.hidden = false; show(''); tStatus.textContent = 'The voice demo understands Chinese for now. English voice input arrives with the English app.'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
+    kind = k; talk.hidden = false; show('');
+    if (!Rec) { tStatus.textContent = 'This browser doesn’t support voice input. Try Chrome or Safari.'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
+    try { rec && rec.abort(); } catch (_) {}
+    cancelled = false; heard = false;
+    rec = new Rec(); rec.lang = 'zh-TW'; rec.interimResults = true; rec.maxAlternatives = 1;
+
+    ls.hidden = false; ls.classList.add('waiting'); lsTitle.textContent = 'Allow microphone access'; lsLive.textContent = ''; $('#ls-eg').textContent = `Say the ${k} you want to add. ${EG[k]}`;
+    $('#ls-done').focus();
+    tStatus.textContent = 'Listening…';
+    rec.onstart = () => { ls.classList.remove('waiting'); lsTitle.textContent = 'Listening. Go ahead.'; };
+    rec.onresult = (e) => { heard = true; const t = [...e.results].map((r) => r[0].transcript).join(''); lsLive.textContent = `「${t}」`; show(t); };
+    rec.onerror = (e) => { closeLs(); tStatus.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'No microphone access. Allow it next to the address bar.' : e.error === 'aborted' ? tStatus.textContent : 'Didn’t catch that. Tap the mic again.'; };
+    rec.onend = () => { closeLs(); if (cancelled) return; if (heard && last) { tStatus.textContent = 'Done. It is on the demo phone:'; create(); return; } if (tStatus.textContent.startsWith('Listening')) tStatus.textContent = 'Didn’t hear anything. Tap the mic again.'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+    try { rec.start(); } catch (_) { closeLs(); tStatus.textContent = 'The microphone couldn’t start.'; }
+  }
+  $('#talk-form').addEventListener('submit', (e) => { e.preventDefault(); kind = { v: 'alarm', c: 'event', t: 'todo' }[home[0]] || kind; show($('#talk-input').value.trim()); if (last) { tStatus.textContent = 'Parsed with the app rules and added to the demo phone:'; create(); } });
+
+  const NOW = new Date(DEMO_NOW);
+  function create() {
+    const c = last, w = c.when && new Date(c.when);
+    let note;
+    if (kind === 'todo') {
+      const q = c.quadrant || 2;
+      todos.push({ id: Date.now(), q, t: c.title || 'New todo' });
+      note = c.quadrant ? `Added todo "${c.title}"` : `Added "${c.title}". With no priority said, the app files it under Unsorted; here it goes to Schedule it`;
+      go('t0', note);
+    } else if (kind === 'alarm') {
+      if (!w) { go('v1', 'No time heard, so no alarm was set'); return reveal(); }
+      alarms.push({ h: w.getHours(), m: w.getMinutes(), title: c.title, when: w, rep: rep(c), isNew: true });
+      go('v1', `Alarm set for ${p2(w.getHours())}:${p2(w.getMinutes())}`);
+    } else {
+      const d = w || new Date(2026, 10, 6);
+      events.push({ d, title: c.title || 'New event' });
+      const inView = d.getFullYear() === 2026 && d.getMonth() === 10;
+      go('c1', inView ? `Added "${c.title}" on ${d.getMonth() + 1}/${d.getDate()}` : `Added "${c.title}" on ${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}. The demo calendar only shows November`);
+    }
+    reveal();
+  }
+  const reveal = () => $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  function rep(c) {
+    if (c.daily) return 'Every day';
+    const d = c.byWeekday;
+    if (d.join() === 'MO,TU,WE,TH,FR') return 'Weekdays';
+    return d.length ? d.map((x) => WD[x]).join(', ') : '';
+  }
+
+  const START = { cal: 'c1', todo: 't0', voice: 'v1' };
+  document.querySelectorAll('[data-try]').forEach((b) => b.addEventListener('click', () => {
+    go(START[b.dataset.try]); screen.classList.add('fresh');
+    $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }));
+  if (!document.documentElement.lang.startsWith('zh') ? false : !/^zh/i.test(navigator.language || '')) $('#lang-hint').hidden = false;
+  screen.classList.add('fresh');
+  go('c1');
+})();
+</script>
+</body>
+</html>

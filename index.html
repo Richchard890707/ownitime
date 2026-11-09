@@ -12,6 +12,9 @@
 <meta property="og:url" content="https://richchard890707.github.io/ownitime/">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://richchard890707.github.io/ownitime/">
+<link rel="alternate" hreflang="zh-Hant" href="https://richchard890707.github.io/ownitime/">
+<link rel="alternate" hreflang="en" href="https://richchard890707.github.io/ownitime/en/">
+<link rel="alternate" hreflang="x-default" href="https://richchard890707.github.io/ownitime/en/">
 <link rel="icon" href="assets/icon.png">
 <script src="assets/voice-parser.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -165,6 +168,8 @@ nav a:hover { color: var(--ink); }
 .al-card.flash { animation: flash 1.2s ease-out 2; }
 @keyframes flash { 50% { filter: brightness(1.6); } }
 .ev-chip { height: 1.4%; display: flex; align-items: center; padding-left: .9cqw; border-left: .5cqw solid #00acc1; background: #055763; border-radius: .5cqw; color: #e8f6f8; font: 400 2.1cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; overflow: hidden; white-space: nowrap; z-index: 1; animation: flash 1.2s ease-out 2; }
+.lang-hint { margin: 0; padding: 8px 16px; text-align: center; font-size: .9rem; background: var(--surface); border-bottom: 1px solid var(--line); }
+.lang-hint a { color: var(--accent); font-weight: 700; }
 .after-try { font-size: .9rem; }
 .after-try a { color: var(--accent); font-weight: 700; }
 @media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
@@ -216,6 +221,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
 </head>
 <body>
 
+<p class="lang-hint" id="lang-hint" hidden lang="en">This page is in Chinese. <a href="en/">View it in English</a></p>
 <header>
   <div class="wrap bar">
     <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="32" height="32">OwnITime</a>
@@ -224,6 +230,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
       <a href="#film">看影片</a>
       <a href="#more">更多功能</a>
       <a href="#faq">常見問題</a>
+      <a href="en/" hreflang="en" lang="en" data-lang>English</a>
     </nav>
     <a class="btn btn-primary btn-sm" href="https://play.google.com/store/apps/details?id=com.ownitime.app" target="_blank" rel="noopener">
       <svg class="play-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>Google Play 下載
@@ -656,7 +663,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
   $('#ls-done').addEventListener('click', () => { try { rec && rec.stop(); } catch (_) {} closeLs(); });
   $('#ls-cancel').addEventListener('click', () => { cancelled = true; try { rec && rec.abort(); } catch (_) {} closeLs(); tStatus.textContent = '已取消。'; show(''); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ls.hidden) $('#ls-cancel').click(); });
+  const EN = document.documentElement.lang === 'en';
   function listen(k) {
+    if (EN) { talk.hidden = false; show(''); tStatus.textContent = '語音示範目前只聽得懂中文，英文版 App 推出後會一起更新。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
     kind = k; talk.hidden = false; show('');
     if (!Rec) { tStatus.textContent = '這個瀏覽器不支援語音輸入(建議用 Chrome 或 Safari)，可以在下面打字試試。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
     try { rec && rec.abort(); } catch (_) {}
@@ -708,6 +717,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     go(START[b.dataset.try]); screen.classList.add('fresh');
     $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }));
+  if (!document.documentElement.lang.startsWith('zh') ? false : !/^zh/i.test(navigator.language || '')) $('#lang-hint').hidden = false;
   screen.classList.add('fresh');
   go('c1');
 })();
