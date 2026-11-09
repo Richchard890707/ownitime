@@ -651,7 +651,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     tResult.querySelectorAll('dd').forEach((dd, i) => { dd.textContent = rows[i][1]; });
   }
   const ls = $('#listening'), lsTitle = $('#ls-title'), lsLive = $('#ls-live');
-  const EG = { 鬧鐘: '例如「明天早上七點半提醒我拿包裹」', 行程: '例如「下午兩點到四點上課 標籤學校」', 待辦: '例如「重要緊急 繳電話費」' };
+  const EG = { 鬧鐘: '例如「明天早上七點半提醒我拿包裹」', 行程: '例如「下午兩點到四點上課 標籤學校」', 待辦: '例如「重要又緊急 繳電話費」' };
   const closeLs = () => { ls.hidden = true; };
   $('#ls-done').addEventListener('click', () => { try { rec && rec.stop(); } catch (_) {} closeLs(); });
   $('#ls-cancel').addEventListener('click', () => { cancelled = true; try { rec && rec.abort(); } catch (_) {} closeLs(); tStatus.textContent = '已取消。'; show(''); });
