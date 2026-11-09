@@ -16,7 +16,7 @@
 <script src="assets/voice-parser.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=DM+Mono:wght@400;500&family=Roboto+Mono:wght@300;400&display=swap">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"OwnITime","operatingSystem":"Android","applicationCategory":"ProductivityApplication","description":"共用行事曆、待辦四象限、語音鬧鐘收在同一支 App。","offers":{"@type":"Offer","price":"0","priceCurrency":"TWD"},"downloadUrl":"https://play.google.com/store/apps/details?id=com.ownitime.app"}
 </script>
@@ -154,6 +154,17 @@ nav a:hover { color: var(--ink); }
 .mx-row.done .mx-ck { background: #869197; }
 .mx-row.lift { z-index: 5; box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, .55); outline: .3cqw solid #4cd7c9; cursor: grabbing; }
 .mx-drop { border: .4cqw dashed; border-radius: 3cqw; pointer-events: none; }
+.al-card { left: 0; width: 100%; height: 12.05%; background-repeat: no-repeat; z-index: 1; }
+.al-card.new { background-image: url(assets/shots/alarm_card.webp); background-size: 100% 100%; }
+.al-card b, .al-card i, .al-card em, .al-card small, .al-card span { position: absolute; font-style: normal; white-space: nowrap; translate: 0 -50%; }
+.al-card b { left: 5.1%; top: 28.6%; font: 300 6.2cqw/1 "Roboto Mono", ui-monospace, monospace; color: #f2f7f8; text-shadow: 0 0 1.4cqw rgba(120, 220, 220, .35); letter-spacing: .02em; }
+.al-card i { left: 30.1%; top: 40%; font: 500 3.9cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #eef4f5; }
+.al-card em { left: 30%; top: 63%; font: 400 2.5cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #cfd8dc; background: rgba(255, 255, 255, .07); border-radius: 1cqw; padding: 1.3cqw 2cqw; }
+.al-card small { left: 5.1%; top: 62%; font: 400 2.8cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #6b757a; }
+.al-card span { left: 5.1%; top: 78%; font: 400 2.5cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; color: #00d2c8; }
+.al-card.flash { animation: flash 1.2s ease-out 2; }
+@keyframes flash { 50% { filter: brightness(1.6); } }
+.ev-chip { height: 1.4%; display: flex; align-items: center; padding-left: .9cqw; border-left: .5cqw solid #00acc1; background: #055763; border-radius: .5cqw; color: #e8f6f8; font: 400 2.1cqw/1 "Noto Sans TC", "PingFang TC", sans-serif; overflow: hidden; white-space: nowrap; z-index: 1; animation: flash 1.2s ease-out 2; }
 .after-try { font-size: .9rem; }
 .after-try a { color: var(--accent); font-weight: 700; }
 @media (max-width: 900px) { .phone { width: min(280px, 78vw); } }
@@ -435,8 +446,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     t4: { cap: '完成的事收進「已完成」，隨時看得到', sub: '點「矩陣」回到四格', nav: true, hots: [...HDR(8.7), { x: 5, y: 14, w: 17, h: 4.4, label: '切換到矩陣', go: 't0' }, MIC_T] },
     v1: { cap: '鬧鐘頁右下角有麥克風，說一句話就建好', sub: '點閃動的 09:00 看鬧鐘響起來、試試延後；也可以點麥克風或「起床」', nav: true, hots: [...HDR(8.7),
       { x: 57.5, y: 81.4, w: 13, h: 6.4, label: '用說的建立鬧鐘', talk: '鬧鐘' },
-      { x: 3, y: 39.4, w: 44, h: 9.6, label: '編輯「起床」', go: 'a2' },
-      { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5', main: true }] },
+      { x: 3, y: 39.4, w: 44, h: 9.6, label: '編輯「起床」', go: 'a2', card: true },
+      { x: 3, y: 52.6, w: 44, h: 9, label: '看鬧鐘響起來的樣子', go: 'v5', main: true, card: true }] },
     a2: { cap: '重複方式：每日、週一至週五、指定星期、每週間隔都能選', sub: '點右上的 ✕ 回到鬧鐘', hots: [{ x: 82, y: 12.8, w: 11, h: 5.6, label: '關閉', go: 'v1' }, BACK(6.9, 8.6)] },
     v5: { cap: '時間到，鎖定畫面直接跳出全螢幕響鈴', sub: '按「停止」，或按「延後」選要延多久', hots: [
       { x: 17.5, y: 82.6, w: 63, h: 6.6, label: '停止', go: 'v1', note: '鬧鐘已停止' },
@@ -471,7 +482,10 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     cap.innerHTML = note ? `${note}<small>${st.sub}</small>` : `${st.cap}<small>${st.sub}</small>`;
     screen.querySelectorAll('.hot, .mx').forEach((n) => n.remove());
     if (st.matrix) matrix();
-    [...(st.hots || []), ...(st.nav ? NAV : [])].forEach((h) => {
+    if (id === 'v1' && alarms.length > 3) drawAlarms();
+    if (id === 'c1') drawEvents();
+    const dyn = id === 'v1' && alarms.length > 3 ? alarmHots : null;
+    [...(dyn ? st.hots.filter((h) => !h.card).concat(dyn) : st.hots || []), ...(st.nav ? NAV : [])].forEach((h) => {
       const b = document.createElement('button');
       b.className = h.main ? 'hot main' : 'hot'; b.setAttribute('aria-label', h.label);
       Object.assign(b.style, { left: h.x + '%', top: h.y + '%', width: h.w + '%', height: h.h + '%' });
@@ -485,6 +499,56 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
       screen.appendChild(b);
     });
     if (st.auto) timer = setTimeout(() => go(st.auto[0]), st.auto[1]);
+  }
+
+  // ---------- 用說的建立的鬧鐘:截圖上的三張卡照時間排,新卡用抹掉文字的卡片底圖 ----------
+  const alarms = [ // src = 截圖上第幾張卡
+    { h: 6, m: 30, src: 0, go: 'a2', label: '編輯「起床」' }, { h: 9, m: 0, src: 1, go: 'v5', label: '看鬧鐘響起來的樣子', main: true }, { h: 19, m: 0, src: 2, go: 'v5', label: '看「健身」響起來的樣子' },
+  ];
+  let alarmHots = [];
+  const TOP = 38.25, PITCH = 13.1, CH = 12.05; // 第一張卡的上緣、卡距、卡高(%)
+  function drawAlarms() {
+    const list = alarms.slice().sort((a, b) => a.h * 60 + a.m - (b.h * 60 + b.m));
+    const ni = list.findIndex((a) => a === alarms[alarms.length - 1]);
+    const from = Math.min(Math.max(0, ni - 2), list.length - 3); // 畫面放得下三張,新的那張一定要在裡面(像 App 捲到那裡)
+    alarmHots = [];
+    list.slice(from, from + 3).forEach((a, i) => {
+      const top = TOP + i * PITCH, el = document.createElement('div');
+      el.className = 'mx al-card' + (a.isNew ? ' new' : '');
+      el.style.top = top + '%';
+      if (a.isNew) {
+        const mins = Math.round((a.when - NOW) / 6e4), tomorrow = a.when.toDateString() === new Date(2026, 10, 7).toDateString();
+        el.innerHTML = '<b></b><i></i><small></small><span></span>' + (a.rep ? '<em></em>' : '');
+        el.querySelector('b').textContent = `${p2(a.h)}:${p2(a.m)}`;
+        el.querySelector('i').textContent = a.title || '鬧鐘';
+        el.querySelector('small').textContent = tomorrow ? '明天' : `${a.when.getMonth() + 1}月${a.when.getDate()}日`;
+        el.querySelector('span').textContent = mins > 0 ? `還有 ${Math.floor(mins / 60)} 小時 ${mins % 60} 分` : '';
+        if (a.rep) el.querySelector('em').textContent = '⇄ ' + a.rep;
+        if (a === alarms[alarms.length - 1]) el.classList.add('flash');
+      } else {
+        el.style.backgroundImage = 'url(assets/shots/v1.webp)';
+        el.style.backgroundSize = `100% ${100 / CH * 100}%`;
+        el.style.backgroundPosition = `0 ${(TOP + a.src * PITCH) / (100 - CH) * 100}%`;
+      }
+      screen.appendChild(el);
+      alarmHots.push({ x: 3, y: top + 1.2, w: 44, h: 9.6, label: a.label || `看「${a.title}」響起來的樣子`, go: a.go || 'v5', main: a.main });
+    });
+  }
+  // ---------- 用說的建立的行程:畫在月曆格子裡,樣式照截圖上的「沖繩旅行」----------
+  const events = [];
+  const USED = { 6: 3, 7: 2, 8: 1, 11: 1 }; // 截圖上每天已經佔掉幾列
+  function drawEvents() {
+    const used = { ...USED };
+    events.forEach((e) => {
+      if (e.d.getFullYear() !== 2026 || e.d.getMonth() !== 10) return;
+      const n = e.d.getDate(), slot = used[n] || 0;
+      if (slot > 2) return; // 那天已經滿了
+      used[n] = slot + 1;
+      const row = Math.floor((n - 1) / 7), col = (n - 1) % 7, el = document.createElement('div');
+      el.className = 'mx ev-chip'; el.textContent = e.title;
+      Object.assign(el.style, { left: (col * 14.3 + 0.2) + '%', width: '13.9%', top: (22.6 + row * 9.5 + 1.4 + slot * 1.6) + '%' });
+      screen.appendChild(el);
+    });
   }
 
   // ---------- 四象限:空矩陣截圖(t0)上疊可拖曳的待辦;樣式照 App 截圖量的 ----------
@@ -565,12 +629,14 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
   const Q = { 1: '立刻做(重要・緊急)', 2: '排時間做(重要・不緊急)', 3: '快速解決(不重要・緊急)', 4: '有空再說(不重要・不緊急)' };
   const p2 = (n) => String(n).padStart(2, '0');
   const day = (d) => `${d.getMonth() + 1} 月 ${d.getDate()} 日 週${'日一二三四五六'[d.getDay()]}`;
-  let kind = '鬧鐘', rec = null;
+  let kind = '鬧鐘', rec = null, last = null, cancelled = false, heard = false;
+  const DEMO_NOW = '2026-11-06T22:32:00'; // 示範截圖拍攝的時間,「明天」才會落在月曆的 11/7
   function show(text) {
+    last = null;
     tSaid.textContent = text ? `「${text}」` : '';
     tResult.innerHTML = '';
     if (!text || !window.ownitimeParseVoice) return;
-    const c = JSON.parse(window.ownitimeParseVoice(text));
+    const c = JSON.parse(window.ownitimeParseVoice(text, DEMO_NOW)); last = c;
     const rows = [['建立', kind], ['事情', c.title || '(沒聽到事情)']];
     if (c.when) {
       const w = new Date(c.when), e = c.endAt && new Date(c.endAt);
@@ -585,27 +651,57 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: 
     tResult.querySelectorAll('dd').forEach((dd, i) => { dd.textContent = rows[i][1]; });
   }
   const ls = $('#listening'), lsTitle = $('#ls-title'), lsLive = $('#ls-live');
-  const EG = { 鬧鐘: '例如「明天早上七點半提醒我拿包裹」', 行程: '例如「下午兩點到四點上課 標籤學校」', 待辦: '例如「重要又緊急 繳電話費」' };
+  const EG = { 鬧鐘: '例如「明天早上七點半提醒我拿包裹」', 行程: '例如「下午兩點到四點上課 標籤學校」', 待辦: '例如「重要緊急 繳電話費」' };
   const closeLs = () => { ls.hidden = true; };
   $('#ls-done').addEventListener('click', () => { try { rec && rec.stop(); } catch (_) {} closeLs(); });
-  $('#ls-cancel').addEventListener('click', () => { try { rec && rec.abort(); } catch (_) {} closeLs(); tStatus.textContent = '已取消。'; show(''); });
+  $('#ls-cancel').addEventListener('click', () => { cancelled = true; try { rec && rec.abort(); } catch (_) {} closeLs(); tStatus.textContent = '已取消。'; show(''); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ls.hidden) $('#ls-cancel').click(); });
   function listen(k) {
     kind = k; talk.hidden = false; show('');
     if (!Rec) { tStatus.textContent = '這個瀏覽器不支援語音輸入(建議用 Chrome 或 Safari)，可以在下面打字試試。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
     try { rec && rec.abort(); } catch (_) {}
+    cancelled = false; heard = false;
     rec = new Rec(); rec.lang = 'zh-TW'; rec.interimResults = true; rec.maxAlternatives = 1;
     // 滿版遮罩:先顯示「等麥克風權限」,真的開始收音才變成「正在聽」
     ls.hidden = false; ls.classList.add('waiting'); lsTitle.textContent = '請允許使用麥克風'; lsLive.textContent = ''; $('#ls-eg').textContent = `說一句要建立的${k}，${EG[k]}`;
     $('#ls-done').focus();
     tStatus.textContent = '正在聽…';
     rec.onstart = () => { ls.classList.remove('waiting'); lsTitle.textContent = '正在聽，請說話'; };
-    rec.onresult = (e) => { const t = [...e.results].map((r) => r[0].transcript).join(''); lsLive.textContent = `「${t}」`; show(t); };
+    rec.onresult = (e) => { heard = true; const t = [...e.results].map((r) => r[0].transcript).join(''); lsLive.textContent = `「${t}」`; show(t); };
     rec.onerror = (e) => { closeLs(); tStatus.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? '沒有拿到麥克風權限。請在瀏覽器網址列旁允許麥克風，或在下面打字試試。' : e.error === 'aborted' ? tStatus.textContent : '沒聽清楚，再點一次麥克風，或在下面打字試試。'; };
-    rec.onend = () => { closeLs(); if (tStatus.textContent.startsWith('正在聽')) tStatus.textContent = tSaid.textContent ? '聽完了。App 裡會先讓你確認，再建立。' : '沒聽到聲音，再點一次麥克風試試。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+    rec.onend = () => { closeLs(); if (cancelled) return; if (heard && last) { tStatus.textContent = '聽完了，已經建立在示範手機上：'; create(); return; } if (tStatus.textContent.startsWith('正在聽')) tStatus.textContent = '沒聽到聲音，再點一次麥克風試試。'; talk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
     try { rec.start(); } catch (_) { closeLs(); tStatus.textContent = '麥克風沒辦法啟動，可以在下面打字試試。'; }
   }
-  $('#talk-form').addEventListener('submit', (e) => { e.preventDefault(); tStatus.textContent = '用 App 的規則解析：'; show($('#talk-input').value.trim()); });
+  $('#talk-form').addEventListener('submit', (e) => { e.preventDefault(); kind = { v: '鬧鐘', c: '行程', t: '待辦' }[home[0]] || kind; show($('#talk-input').value.trim()); if (last) { tStatus.textContent = '用 App 的規則解析，已經建立在示範手機上：'; create(); } });
+
+  const NOW = new Date(DEMO_NOW);
+  function create() {
+    const c = last, w = c.when && new Date(c.when);
+    let note;
+    if (kind === '待辦') {
+      const q = c.quadrant || 2;
+      todos.push({ id: Date.now(), q, t: c.title || '新的待辦' });
+      note = c.quadrant ? `已新增待辦「${c.title}」` : `已新增「${c.title}」。沒說重要或緊急，App 會放進「未分類」，這裡先放「排時間做」`;
+      go('t0', note);
+    } else if (kind === '鬧鐘') {
+      if (!w) { go('v1', '沒聽到時間，鬧鐘沒有建立；說說看「明天早上七點」'); return reveal(); }
+      alarms.push({ h: w.getHours(), m: w.getMinutes(), title: c.title, when: w, rep: rep(c), isNew: true });
+      go('v1', `已建立 ${p2(w.getHours())}:${p2(w.getMinutes())} 的鬧鐘`);
+    } else {
+      const d = w || new Date(2026, 10, 6); // 沒講日期 = 月曆上選的那天(11/6)
+      events.push({ d, title: c.title || '新行程' });
+      const inView = d.getFullYear() === 2026 && d.getMonth() === 10;
+      go('c1', inView ? `已建立 ${d.getMonth() + 1}/${d.getDate()} 的「${c.title}」` : `已建立 ${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} 的「${c.title}」，示範月曆只看得到 11 月`);
+    }
+    reveal();
+  }
+  const reveal = () => $('#demo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  function rep(c) {
+    if (c.daily) return '每天';
+    const d = c.byWeekday;
+    if (d.join() === 'MO,TU,WE,TH,FR') return '週一至週五';
+    return d.length ? '週' + d.map((x) => WD[x]).join('') : '';
+  }
 
   const START = { cal: 'c1', todo: 't0', voice: 'v1' };
   document.querySelectorAll('[data-try]').forEach((b) => b.addEventListener('click', () => {
